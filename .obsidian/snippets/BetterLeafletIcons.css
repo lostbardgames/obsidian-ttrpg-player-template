@@ -1,0 +1,34 @@
+/* @settings
+
+name: Leaflet SVG Borders
+id: lf-svg-borders
+settings:
+    - 
+        id: lf-svg-border-width
+        title: Border width
+        description: The width of the border, using an SVG-relative number.
+        type: variable-number
+        default: 50
+
+    -
+        id: lf-svg-border-color
+        title: Border color
+        description: The color of the border.
+        type: variable-color
+        opacity: true
+        format: rgb
+        default: rgb( 255 255 255 / 1 )
+*/
+body {
+    --lf-svg-border-width: 50;
+    --lf-svg-border-color: rgb( 255 255 255 / 1);
+}
+.block-language-leaflet .leaflet-div-icon svg:not(:has(defs)) {
+    paint-order: stroke;
+
+    stroke: var(--lf-svg-border-color);
+    stroke-width: var(--lf-svg-border-width);
+}
+
+/* Massive shoutout to sailKite for the amazing .css to better improve the Leaflet Icons. */
+/* https://github.com/sailKiteV >/

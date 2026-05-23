@@ -1,0 +1,65 @@
+body .callout.callout.callout[data-callout-metadata="map"] {
+   --callout-icon: map;
+   --callout-color: 255, 255, 0 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="misc"] {
+   --callout-icon: help-circle;
+   --callout-color: 255, 255, 255 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="rolltable"] {
+   --callout-icon: dices;
+   --callout-color: 195, 65, 55 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="info"] {
+   --callout-icon: lightbulb;
+   --callout-color: 255, 200, 0 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="tools"] {
+   --callout-icon: pocket-knife;
+   --callout-color: 150, 210, 0 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="rules"] {
+   --callout-icon: book-open-text;
+   --callout-color: 200, 50, 255 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="generators"] {
+   --callout-icon: dices;
+   --callout-color: 20, 250, 255 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="sessionstart"] {
+   --callout-icon: play;
+   --callout-color: 100, 200, 0 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="longrest"] {
+   --callout-icon: bed;
+   --callout-color: 150, 110, 200 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="travel"] {
+   --callout-icon: footprints;
+   --callout-color: 200, 150, 5 !important;
+}
+
+body .callout.callout.callout[data-callout-metadata="aftersession"] {
+   --callout-icon: notebook-pen;
+   --callout-color: 200, 50, 25 !important;
+}
+body .callout.callout.callout[data-callout-metadata="longterm"] {
+   --callout-icon: flag;
+   --callout-color: 170, 120, 220 !important;
+}
+body .callout.callout.callout[data-callout-metadata="shortterm"] {
+   --callout-icon: icon-goal;
+   --callout-color: 120, 220, 160 !important;
+}
+
+
+/* https://lucide.dev */

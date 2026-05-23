@@ -1,0 +1,23 @@
+# ── macOS ─────────────────────────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+
+# ── Obsidian session state (user-specific, auto-regenerated) ──────────────────
+# workspace.json is intentionally tracked — it sets the default split layout
+# for new users opening the vault for the first time.
+.obsidian/workspace-mobile.json
+.obsidian/ddb-config.json
+
+# ── User data & vault backups ─────────────────────────────────────────────────
+.trash/
+.vault-backups/
+z_Uncategoried/
+
+# ── Python cache ──────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+
+# ── Build artifacts ───────────────────────────────────────────────────────────
+*.bak
+Player-Vault-*.zip
+files.json

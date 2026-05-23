@@ -1,0 +1,119 @@
+{
+  "cascadeColors": true,
+  "colorBackground": false,
+  "palette": [],
+  "fileColors": [
+    {
+      "path": "Campaign/Characters/Players",
+      "color": "#f1c40f"
+    },
+    {
+      "path": "Campaign/Characters/NPCs",
+      "color": "#95a5a6"
+    },
+    {
+      "path": "Campaign/Characters/Deities",
+      "color": "#b388ff"
+    },
+    {
+      "path": "Campaign/Organizations",
+      "color": "#5dade2"
+    },
+    {
+      "path": "Campaign/Worlds",
+      "color": "#27ae60"
+    },
+    {
+      "path": "Campaign/Planes",
+      "color": "#a29bfe"
+    },
+    {
+      "path": "Campaign/Regions",
+      "color": "#2ecc71"
+    },
+    {
+      "path": "Campaign/Settlements",
+      "color": "#e67e22"
+    },
+    {
+      "path": "Campaign/Districts",
+      "color": "#f39c12"
+    },
+    {
+      "path": "Campaign/Areas",
+      "color": "#1abc9c"
+    },
+    {
+      "path": "Campaign/POIs",
+      "color": "#e74c3c"
+    },
+    {
+      "path": "Campaign/Parties/Party Dashboards",
+      "color": "#e74c3c"
+    },
+    {
+      "path": "Campaign/Parties/Adventures",
+      "color": "#fd9644"
+    },
+    {
+      "path": "Campaign/Parties/Quests",
+      "color": "#f9ca24"
+    },
+    {
+      "path": "Campaign/Parties/Session Notes",
+      "color": "#55efc4"
+    },
+    {
+      "path": "Campaign/Parties/Encounters",
+      "color": "#ff7675"
+    },
+    {
+      "path": "Campaign/Parties/Service Requests",
+      "color": "#00b894"
+    },
+    {
+      "path": "Campaign/Parties/Journey Boards",
+      "color": "#fd9644"
+    },
+    {
+      "path": "Campaign/Lore/Classes",
+      "color": "#e74c3c"
+    },
+    {
+      "path": "Campaign/Lore/Feats",
+      "color": "#fdcb6e"
+    },
+    {
+      "path": "Campaign/Lore/Races",
+      "color": "#00cec9"
+    },
+    {
+      "path": "Campaign/Lore/Backgrounds",
+      "color": "#c9a84c"
+    },
+    {
+      "path": "Campaign/Lore/Conditions",
+      "color": "#d63031"
+    },
+    {
+      "path": "Campaign/Lore/Languages",
+      "color": "#81ecec"
+    },
+    {
+      "path": "Campaign/Lore/Events",
+      "color": "#74b9ff"
+    },
+    {
+      "path": "Campaign/Lore/Optional Features",
+      "color": "#a29bfe"
+    },
+    {
+      "path": "Campaign/Possessions/Items",
+      "color": "#00cec9"
+    },
+    {
+      "path": "Campaign/Possessions/Spells",
+      "color": "#a29bfe"
+    }
+  ]
+}

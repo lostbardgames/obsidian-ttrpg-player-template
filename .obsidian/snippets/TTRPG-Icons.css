@@ -1,0 +1,206 @@
+/* ═══════════════════════════════════════════════════════════════════
+   TTRPG Icons — Supercharged Links
+   Targets the inner spans Supercharged Links injects into every link:
+     .data-link-icon  → ::before pseudo for the icon
+     .data-link-text  → color of the link label
+   File-explorer uses the same data-link-tags attr on
+   .nav-file-title-content (which also gets the data-link-* classes).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════
+   CHARACTERS
+   ═══════════════════════ */
+
+/* Player Characters */
+.data-link-icon[data-link-tags*="Player" i]::before,
+.nav-file-title-content[data-link-tags*="Player" i]::before { content: "⚔️ "; }
+.data-link-text[data-link-tags*="Player" i],
+.nav-file-title-content[data-link-tags*="Player" i] { color: #f1c40f !important; }
+
+/* NPCs (not Deities) */
+.data-link-icon[data-link-tags*="NPC" i]:not([data-link-tags*="Deity" i])::before,
+.nav-file-title-content[data-link-tags*="NPC" i]:not([data-link-tags*="Deity" i])::before { content: "👤 "; }
+.data-link-text[data-link-tags*="NPC" i]:not([data-link-tags*="Deity" i]),
+.nav-file-title-content[data-link-tags*="NPC" i]:not([data-link-tags*="Deity" i]) { color: #95a5a6 !important; }
+
+/* Deities */
+.data-link-icon[data-link-tags*="Deity" i]::before,
+.nav-file-title-content[data-link-tags*="Deity" i]::before { content: "✨ "; }
+.data-link-text[data-link-tags*="Deity" i],
+.nav-file-title-content[data-link-tags*="Deity" i] { color: #b388ff !important; }
+
+/* Organizations */
+.data-link-icon[data-link-tags*="Organization" i]::before,
+.nav-file-title-content[data-link-tags*="Organization" i]::before { content: "🏛️ "; }
+.data-link-text[data-link-tags*="Organization" i],
+.nav-file-title-content[data-link-tags*="Organization" i] { color: #5dade2 !important; }
+
+/* Party Dashboards */
+.data-link-icon[data-link-tags*="Party" i]::before,
+.nav-file-title-content[data-link-tags*="Party" i]::before { content: "🛡️ "; }
+.data-link-text[data-link-tags*="Party" i],
+.nav-file-title-content[data-link-tags*="Party" i] { color: #e74c3c !important; font-weight: 600; }
+
+/* ═══════════════════════
+   LOCATIONS
+   ═══════════════════════ */
+
+/* Worlds */
+.data-link-icon[data-link-tags*="World" i]::before,
+.nav-file-title-content[data-link-tags*="World" i]::before { content: "🌍 "; }
+.data-link-text[data-link-tags*="World" i],
+.nav-file-title-content[data-link-tags*="World" i] { color: #27ae60 !important; }
+
+/* Planes */
+.data-link-icon[data-link-tags*="Plane" i]::before,
+.nav-file-title-content[data-link-tags*="Plane" i]::before { content: "🌀 "; }
+.data-link-text[data-link-tags*="Plane" i],
+.nav-file-title-content[data-link-tags*="Plane" i] { color: #a29bfe !important; }
+
+/* Regions */
+.data-link-icon[data-link-tags*="Region" i]::before,
+.nav-file-title-content[data-link-tags*="Region" i]::before { content: "🗺️ "; }
+.data-link-text[data-link-tags*="Region" i],
+.nav-file-title-content[data-link-tags*="Region" i] { color: #27ae60 !important; }
+
+/* Settlements */
+.data-link-icon[data-link-tags*="Settlement" i]::before,
+.nav-file-title-content[data-link-tags*="Settlement" i]::before { content: "🏰 "; }
+.data-link-text[data-link-tags*="Settlement" i],
+.nav-file-title-content[data-link-tags*="Settlement" i] { color: #e67e22 !important; }
+
+/* Districts */
+.data-link-icon[data-link-tags*="District" i]::before,
+.nav-file-title-content[data-link-tags*="District" i]::before { content: "🏘️ "; }
+.data-link-text[data-link-tags*="District" i],
+.nav-file-title-content[data-link-tags*="District" i] { color: #f39c12 !important; }
+
+/* Areas */
+.data-link-icon[data-link-tags*="Area" i]::before,
+.nav-file-title-content[data-link-tags*="Area" i]::before { content: "🌲 "; }
+.data-link-text[data-link-tags*="Area" i],
+.nav-file-title-content[data-link-tags*="Area" i] { color: #1abc9c !important; }
+
+/* POIs (not Shops) */
+.data-link-icon[data-link-tags*="POI" i]:not([data-link-tags*="Shop" i])::before,
+.nav-file-title-content[data-link-tags*="POI" i]:not([data-link-tags*="Shop" i])::before { content: "📍 "; }
+.data-link-text[data-link-tags*="POI" i]:not([data-link-tags*="Shop" i]),
+.nav-file-title-content[data-link-tags*="POI" i]:not([data-link-tags*="Shop" i]) { color: #e74c3c !important; }
+
+/* Shops */
+.data-link-icon[data-link-tags*="Shop" i]::before,
+.nav-file-title-content[data-link-tags*="Shop" i]::before { content: "🛒 "; }
+.data-link-text[data-link-tags*="Shop" i],
+.nav-file-title-content[data-link-tags*="Shop" i] { color: #f1c40f !important; }
+
+/* ═══════════════════════
+   LORE
+   ═══════════════════════ */
+
+/* Classes (not Subclasses) */
+.data-link-icon[data-link-tags*="Class" i]:not([data-link-tags*="Subclass" i])::before,
+.nav-file-title-content[data-link-tags*="Class" i]:not([data-link-tags*="Subclass" i])::before { content: "⚔️ "; }
+.data-link-text[data-link-tags*="Class" i]:not([data-link-tags*="Subclass" i]),
+.nav-file-title-content[data-link-tags*="Class" i]:not([data-link-tags*="Subclass" i]) { color: #e74c3c !important; }
+
+/* Subclasses */
+.data-link-icon[data-link-tags*="Subclass" i]::before,
+.nav-file-title-content[data-link-tags*="Subclass" i]::before { content: "🎯 "; }
+.data-link-text[data-link-tags*="Subclass" i],
+.nav-file-title-content[data-link-tags*="Subclass" i] { color: #e67e22 !important; }
+
+/* Races / Species */
+.data-link-icon[data-link-tags*="Race" i]::before,
+.data-link-icon[data-link-tags*="Species" i]::before,
+.nav-file-title-content[data-link-tags*="Race" i]::before,
+.nav-file-title-content[data-link-tags*="Species" i]::before { content: "🧬 "; }
+.data-link-text[data-link-tags*="Race" i],
+.data-link-text[data-link-tags*="Species" i],
+.nav-file-title-content[data-link-tags*="Race" i],
+.nav-file-title-content[data-link-tags*="Species" i] { color: #00cec9 !important; }
+
+/* Backgrounds */
+.data-link-icon[data-link-tags*="Background" i]::before,
+.nav-file-title-content[data-link-tags*="Background" i]::before { content: "📜 "; }
+.data-link-text[data-link-tags*="Background" i],
+.nav-file-title-content[data-link-tags*="Background" i] { color: #c9a84c !important; }
+
+/* Feats */
+.data-link-icon[data-link-tags*="Feat" i]::before,
+.nav-file-title-content[data-link-tags*="Feat" i]::before { content: "⭐ "; }
+.data-link-text[data-link-tags*="Feat" i],
+.nav-file-title-content[data-link-tags*="Feat" i] { color: #fdcb6e !important; }
+
+/* Conditions */
+.data-link-icon[data-link-tags*="Condition" i]::before,
+.nav-file-title-content[data-link-tags*="Condition" i]::before { content: "💀 "; }
+.data-link-text[data-link-tags*="Condition" i],
+.nav-file-title-content[data-link-tags*="Condition" i] { color: #d63031 !important; }
+
+/* Events */
+.data-link-icon[data-link-tags*="Event" i]::before,
+.nav-file-title-content[data-link-tags*="Event" i]::before { content: "📅 "; }
+.data-link-text[data-link-tags*="Event" i],
+.nav-file-title-content[data-link-tags*="Event" i] { color: #74b9ff !important; }
+
+/* Languages */
+.data-link-icon[data-link-tags*="Language" i]::before,
+.nav-file-title-content[data-link-tags*="Language" i]::before { content: "💬 "; }
+.data-link-text[data-link-tags*="Language" i],
+.nav-file-title-content[data-link-tags*="Language" i] { color: #81ecec !important; }
+
+/* Optional Features */
+.data-link-icon[data-link-tags*="OptionalFeature" i]::before,
+.nav-file-title-content[data-link-tags*="OptionalFeature" i]::before { content: "🔮 "; }
+.data-link-text[data-link-tags*="OptionalFeature" i],
+.nav-file-title-content[data-link-tags*="OptionalFeature" i] { color: #a29bfe !important; }
+
+/* ═══════════════════════
+   STORY
+   ═══════════════════════ */
+
+/* Adventures */
+.data-link-icon[data-link-tags*="Adventure" i]::before,
+.nav-file-title-content[data-link-tags*="Adventure" i]::before { content: "🗺️ "; }
+.data-link-text[data-link-tags*="Adventure" i],
+.nav-file-title-content[data-link-tags*="Adventure" i] { color: #fd9644 !important; }
+
+/* Quests */
+.data-link-icon[data-link-tags*="Quest" i]::before,
+.nav-file-title-content[data-link-tags*="Quest" i]::before { content: "⚡ "; }
+.data-link-text[data-link-tags*="Quest" i],
+.nav-file-title-content[data-link-tags*="Quest" i] { color: #f9ca24 !important; }
+
+/* Session Notes */
+.data-link-icon[data-link-tags*="SessionNote" i]::before,
+.nav-file-title-content[data-link-tags*="SessionNote" i]::before { content: "📝 "; }
+.data-link-text[data-link-tags*="SessionNote" i],
+.nav-file-title-content[data-link-tags*="SessionNote" i] { color: #55efc4 !important; }
+
+/* Encounters */
+.data-link-icon[data-link-tags*="Encounter" i]::before,
+.nav-file-title-content[data-link-tags*="Encounter" i]::before { content: "🗡️ "; }
+.data-link-text[data-link-tags*="Encounter" i],
+.nav-file-title-content[data-link-tags*="Encounter" i] { color: #ff7675 !important; }
+
+/* Service Requests */
+.data-link-icon[data-link-tags*="Service" i]::before,
+.nav-file-title-content[data-link-tags*="Service" i]::before { content: "🤝 "; }
+.data-link-text[data-link-tags*="Service" i],
+.nav-file-title-content[data-link-tags*="Service" i] { color: #00b894 !important; }
+
+/* ═══════════════════════
+   POSSESSIONS
+   ═══════════════════════ */
+
+/* Spells (must come before Item to win specificity) */
+.data-link-icon[data-link-tags*="Spell" i]::before,
+.nav-file-title-content[data-link-tags*="Spell" i]::before { content: "🔮 "; }
+.data-link-text[data-link-tags*="Spell" i],
+.nav-file-title-content[data-link-tags*="Spell" i] { color: #a29bfe !important; }
+
+/* Items (not Spells) */
+.data-link-icon[data-link-tags*="Item" i]:not([data-link-tags*="Spell" i])::before,
+.nav-file-title-content[data-link-tags*="Item" i]:not([data-link-tags*="Spell" i])::before { content: "🎒 "; }
+.data-link-text[data-link-tags*="Item" i]:not([data-link-tags*="Spell" i]),
+.nav-file-title-content[data-link-tags*="Item" i]:not([data-link-tags*="Spell" i]) { color: #00cec9 !important; }

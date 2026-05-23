@@ -1,0 +1,3 @@
+.vertical-tabs-container:has(.vertical-tab-header-group-items .is-active:nth-child(1)) > .vertical-tab-content-container > * > :nth-child(8) .setting-item-description {
+    display: none;
+}

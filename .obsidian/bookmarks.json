@@ -1,0 +1,83 @@
+{
+  "items": [
+    {
+      "type": "group",
+      "ctime": 1778964763629,
+      "items": [
+        {
+          "type": "group",
+          "ctime": 1778965070542,
+          "items": [],
+          "title": ""
+        },
+        {
+          "type": "group",
+          "ctime": 1778964763629,
+          "items": [],
+          "title": "Campaign"
+        },
+        {
+          "type": "group",
+          "ctime": 1778964763629,
+          "items": [],
+          "title": "z_Assets"
+        },
+        {
+          "type": "group",
+          "ctime": 1778964763629,
+          "items": [],
+          "title": "z_Canvas"
+        },
+        {
+          "type": "group",
+          "ctime": 1778964763629,
+          "items": [],
+          "title": "z_Databases"
+        },
+        {
+          "type": "group",
+          "ctime": 1778964763629,
+          "items": [],
+          "title": "z_Excalidraw"
+        },
+        {
+          "type": "group",
+          "ctime": 1778964763629,
+          "items": [],
+          "title": "z_Templates"
+        },
+        {
+          "type": "group",
+          "ctime": 1778964763629,
+          "items": [],
+          "title": "z_Uncategoried"
+        },
+        {
+          "type": "file",
+          "ctime": 1778964763629,
+          "path": "Buttons.md",
+          "subpath": "#^-"
+        },
+        {
+          "type": "file",
+          "ctime": 1778964763629,
+          "path": "GM Screen.md",
+          "subpath": "#^-"
+        },
+        {
+          "type": "file",
+          "ctime": 1778964763629,
+          "path": "Homepage.md",
+          "subpath": "#^-"
+        },
+        {
+          "type": "file",
+          "ctime": 1778964763629,
+          "path": "import_5etools.py",
+          "subpath": "#^-"
+        }
+      ],
+      "title": "sortspec"
+    }
+  ]
+}

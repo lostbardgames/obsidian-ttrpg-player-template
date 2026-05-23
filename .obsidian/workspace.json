@@ -1,0 +1,134 @@
+{
+  "main": {
+    "id": "bbbcf6ae0c2c3b57",
+    "type": "split",
+    "children": [
+      {
+        "id": "9467cfa3c7f01bd6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "44e343ee85b36b0d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "1.Tools/Homepage.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Homepage"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "65f32582daa1df3a",
+    "type": "split",
+    "children": [
+      {
+        "id": "9948e98e07a8da40",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "af10f2dd22f6f00d",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "aadb4708c3887ffa",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "0fc9409325acfe4b",
+    "type": "split",
+    "children": [
+      {
+        "id": "54d7802c16d010a5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ace4e80af191705f",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "1.Tools/Buttons.md",
+                "mode": "preview",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Buttons"
+            }
+          },
+          {
+            "id": "e9ffc6789f4b90c4",
+            "type": "leaf",
+            "state": {
+              "type": "DICE_ROLLER_VIEW",
+              "state": {},
+              "icon": "dices",
+              "title": "Dice Tray"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 613.5
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "templater-obsidian:Templater": false,
+      "homepage:Open homepage": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "command-palette:Open command palette": false,
+      "workspaces:Manage workspace layouts": false,
+      "bases:Create new base": false,
+      "calendarium:Open Calendarium": false
+    }
+  },
+  "active": "44e343ee85b36b0d",
+  "lastOpenFiles": [
+    "1.Tools/Homepage.md",
+    "1.Tools/Buttons.md",
+    "1.Tools/Player Screen.md",
+    "START HERE.md"
+  ]
+}

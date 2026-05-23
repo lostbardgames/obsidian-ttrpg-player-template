@@ -1,0 +1,21 @@
+{
+  "cssTheme": "ITS Theme",
+  "enabledCssSnippets": [
+    "Banned_Fade",
+    "BetterLeafletIcons",
+    "CalloutsDarkmode",
+    "HideNameEmail",
+    "PropertiesColumns",
+    "RainbowFolders",
+    "SCallouts",
+    "supercharged-links-gen",
+    "TabsInObsidian",
+    "supercharged-links-gen 2",
+    "supercharged-links-gen 3",
+    "supercharged-links-gen 4",
+    "supercharged-links-gen 5",
+    "TTRPG-Icons",
+    "TTRPG-Folders"
+  ],
+  "theme": "system"
+}

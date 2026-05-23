@@ -1,0 +1,208 @@
+{
+  "choices": [
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000001",
+      "name": "New Character",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000001",
+        "name": "New Character",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000001",
+            "name": "NewCharacter.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/NewCharacter.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000002",
+      "name": "New Journal Entry",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000002",
+        "name": "New Journal Entry",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000002",
+            "name": "NewJournalEntry.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/NewJournalEntry.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000003",
+      "name": "New Session Recap",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000003",
+        "name": "New Session Recap",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000003",
+            "name": "NewSessionRecap.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/NewSessionRecap.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000004",
+      "name": "New Quest",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000004",
+        "name": "New Quest",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000004",
+            "name": "NewQuest.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/NewQuest.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000005",
+      "name": "New NPC Known",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000005",
+        "name": "New NPC Known",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000005",
+            "name": "NewNPCKnown.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/NewNPCKnown.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000006",
+      "name": "New Location Visited",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000006",
+        "name": "New Location Visited",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000006",
+            "name": "NewLocationVisited.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/NewLocationVisited.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000007",
+      "name": "New Item",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000007",
+        "name": "New Item",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000007",
+            "name": "NewItem.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/NewItem.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000008",
+      "name": "New Spell",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000008",
+        "name": "New Spell",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000008",
+            "name": "NewSpell.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/NewSpell.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000009",
+      "name": "Check for Updates",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000009",
+        "name": "Check for Updates",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000009",
+            "name": "UpdateVault.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/UpdateVault.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000010",
+      "name": "Reset Vault",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000010",
+        "name": "Reset Vault",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000010",
+            "name": "ResetVault.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/ResetVault.js",
+            "settings": {}
+          }
+        ]
+      }
+    }
+  ],
+  "inputPrompt": "single-line",
+  "persistInputPromptDrafts": true,
+  "useSelectionAsCaptureValue": true,
+  "devMode": false,
+  "templateFolderPath": "z_Templates",
+  "announceUpdates": "major",
+  "version": "2.12.0",
+  "globalVariables": {},
+  "onePageInputEnabled": false,
+  "disableOnlineFeatures": true,
+  "enableRibbonIcon": false,
+  "showCaptureNotification": true,
+  "showInputCancellationNotification": false,
+  "enableTemplatePropertyTypes": false
+}

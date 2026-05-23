@@ -1,0 +1,244 @@
+/* ═══════════════════════════════════════════════════════════════════
+   TTRPG Folders — Icons & Colors
+   Targets .nav-folder-title[data-path="..."] .nav-folder-title-content
+   which Obsidian renders for every folder in the file explorer.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Files before folders in the root file explorer ────────────── */
+.nav-folder-children {
+  display: flex;
+  flex-direction: column;
+}
+.nav-folder-children > .nav-file {
+  order: 0;
+}
+.nav-folder-children > .nav-folder {
+  order: 1;
+}
+
+/* ── Setup guide & how-to ───────────────────────────────────────── */
+.nav-file-title[data-path="START HERE.md"] .nav-file-title-content::before { content: "📖 "; }
+.nav-file-title[data-path="START HERE.md"] .nav-file-title-content { color: #2ecc71 !important; font-weight: 700; }
+
+.nav-file-title[data-path="HOW TO USE.md"] .nav-file-title-content::before { content: "📘 "; }
+.nav-file-title[data-path="HOW TO USE.md"] .nav-file-title-content { color: #5dade2 !important; font-weight: 700; }
+
+/* ── 1.Tools folder & its files ─────────────────────────────────── */
+.nav-folder-title[data-path="1.Tools"] .nav-folder-title-content::before { content: "🧰 "; }
+.nav-folder-title[data-path="1.Tools"] .nav-folder-title-content { color: #a29bfe !important; font-weight: 700; }
+
+.nav-file-title[data-path="1.Tools/Homepage.md"] .nav-file-title-content::before { content: "🏰 "; }
+.nav-file-title[data-path="1.Tools/Homepage.md"] .nav-file-title-content { color: #f1c40f !important; font-weight: 700; }
+
+.nav-file-title[data-path="1.Tools/GM Screen.md"] .nav-file-title-content::before { content: "🛡️ "; }
+.nav-file-title[data-path="1.Tools/GM Screen.md"] .nav-file-title-content { color: #e74c3c !important; font-weight: 700; }
+
+.nav-file-title[data-path="1.Tools/Buttons.md"] .nav-file-title-content::before { content: "⚡ "; }
+.nav-file-title[data-path="1.Tools/Buttons.md"] .nav-file-title-content { color: #5dade2 !important; font-weight: 700; }
+
+/* ── Shared: push icon slightly apart from text ─────────────────── */
+.nav-folder-title-content::before {
+  margin-right: 3px;
+}
+
+/* ═══════════════════════
+   TOP-LEVEL
+   ═══════════════════════ */
+
+.nav-folder-title[data-path="Campaign"] .nav-folder-title-content::before { content: "📚 "; }
+.nav-folder-title[data-path="Campaign"] .nav-folder-title-content { color: #dfe6e9 !important; font-weight: 700; }
+
+.nav-folder-title[data-path="z_Assets"] .nav-folder-title-content::before { content: "🖼️ "; }
+.nav-folder-title[data-path="z_Canvas"] .nav-folder-title-content::before { content: "🗺️ "; }
+.nav-folder-title[data-path="z_Databases"] .nav-folder-title-content::before { content: "🗄️ "; }
+.nav-folder-title[data-path="z_Excalidraw"] .nav-folder-title-content::before { content: "✏️ "; }
+.nav-folder-title[data-path="z_Templates"] .nav-folder-title-content::before { content: "📋 "; }
+.nav-folder-title[data-path="z_Uncategoried"] .nav-folder-title-content::before { content: "📁 "; }
+
+/* ═══════════════════════
+   CHARACTERS
+   ═══════════════════════ */
+
+.nav-folder-title[data-path="Campaign/Characters"] .nav-folder-title-content::before { content: "👥 "; }
+.nav-folder-title[data-path="Campaign/Characters"] .nav-folder-title-content { color: #b2bec3 !important; font-weight: 600; }
+
+.nav-folder-title[data-path="Campaign/Characters/Players"] .nav-folder-title-content::before { content: "⚔️ "; }
+.nav-folder-title[data-path="Campaign/Characters/Players"] .nav-folder-title-content { color: #f1c40f !important; }
+
+.nav-folder-title[data-path="Campaign/Characters/NPCs"] .nav-folder-title-content::before { content: "👤 "; }
+.nav-folder-title[data-path="Campaign/Characters/NPCs"] .nav-folder-title-content { color: #95a5a6 !important; }
+
+.nav-folder-title[data-path="Campaign/Characters/Deities"] .nav-folder-title-content::before { content: "✨ "; }
+.nav-folder-title[data-path="Campaign/Characters/Deities"] .nav-folder-title-content { color: #b388ff !important; }
+
+/* ═══════════════════════
+   ORGANIZATIONS
+   ═══════════════════════ */
+
+.nav-folder-title[data-path="Campaign/Organizations"] .nav-folder-title-content::before { content: "🏛️ "; }
+.nav-folder-title[data-path="Campaign/Organizations"] .nav-folder-title-content { color: #5dade2 !important; }
+
+/* ═══════════════════════
+   LOCATIONS
+   ═══════════════════════ */
+
+.nav-folder-title[data-path="Campaign/Worlds"] .nav-folder-title-content::before { content: "🌍 "; }
+.nav-folder-title[data-path="Campaign/Worlds"] .nav-folder-title-content { color: #27ae60 !important; }
+
+.nav-folder-title[data-path="Campaign/Planes"] .nav-folder-title-content::before { content: "🌀 "; }
+.nav-folder-title[data-path="Campaign/Planes"] .nav-folder-title-content { color: #a29bfe !important; }
+
+.nav-folder-title[data-path="Campaign/Regions"] .nav-folder-title-content::before { content: "🗺️ "; }
+.nav-folder-title[data-path="Campaign/Regions"] .nav-folder-title-content { color: #2ecc71 !important; }
+
+.nav-folder-title[data-path="Campaign/Settlements"] .nav-folder-title-content::before { content: "🏰 "; }
+.nav-folder-title[data-path="Campaign/Settlements"] .nav-folder-title-content { color: #e67e22 !important; }
+
+.nav-folder-title[data-path="Campaign/Districts"] .nav-folder-title-content::before { content: "🏘️ "; }
+.nav-folder-title[data-path="Campaign/Districts"] .nav-folder-title-content { color: #f39c12 !important; }
+
+.nav-folder-title[data-path="Campaign/Areas"] .nav-folder-title-content::before { content: "🌲 "; }
+.nav-folder-title[data-path="Campaign/Areas"] .nav-folder-title-content { color: #1abc9c !important; }
+
+.nav-folder-title[data-path="Campaign/POIs"] .nav-folder-title-content::before { content: "📍 "; }
+.nav-folder-title[data-path="Campaign/POIs"] .nav-folder-title-content { color: #e74c3c !important; }
+
+/* ═══════════════════════
+   PARTIES
+   ═══════════════════════ */
+
+.nav-folder-title[data-path="Campaign/Parties"] .nav-folder-title-content::before { content: "🛡️ "; }
+.nav-folder-title[data-path="Campaign/Parties"] .nav-folder-title-content { color: #e74c3c !important; font-weight: 600; }
+
+.nav-folder-title[data-path="Campaign/Parties/Party Dashboards"] .nav-folder-title-content::before { content: "🛡️ "; }
+.nav-folder-title[data-path="Campaign/Parties/Party Dashboards"] .nav-folder-title-content { color: #e74c3c !important; }
+
+.nav-folder-title[data-path="Campaign/Parties/Adventures"] .nav-folder-title-content::before { content: "🗺️ "; }
+.nav-folder-title[data-path="Campaign/Parties/Adventures"] .nav-folder-title-content { color: #fd9644 !important; }
+
+.nav-folder-title[data-path="Campaign/Parties/Quests"] .nav-folder-title-content::before { content: "⚡ "; }
+.nav-folder-title[data-path="Campaign/Parties/Quests"] .nav-folder-title-content { color: #f9ca24 !important; }
+
+.nav-folder-title[data-path="Campaign/Parties/Session Notes"] .nav-folder-title-content::before { content: "📝 "; }
+.nav-folder-title[data-path="Campaign/Parties/Session Notes"] .nav-folder-title-content { color: #55efc4 !important; }
+
+.nav-folder-title[data-path="Campaign/Parties/Encounters"] .nav-folder-title-content::before { content: "🗡️ "; }
+.nav-folder-title[data-path="Campaign/Parties/Encounters"] .nav-folder-title-content { color: #ff7675 !important; }
+
+.nav-folder-title[data-path="Campaign/Parties/Service Requests"] .nav-folder-title-content::before { content: "🤝 "; }
+.nav-folder-title[data-path="Campaign/Parties/Service Requests"] .nav-folder-title-content { color: #00b894 !important; }
+
+.nav-folder-title[data-path="Campaign/Parties/Journey Boards"] .nav-folder-title-content::before { content: "🧭 "; }
+.nav-folder-title[data-path="Campaign/Parties/Journey Boards"] .nav-folder-title-content { color: #fd9644 !important; }
+
+/* ═══════════════════════
+   LORE
+   ═══════════════════════ */
+
+.nav-folder-title[data-path="Campaign/Lore"] .nav-folder-title-content::before { content: "📖 "; }
+.nav-folder-title[data-path="Campaign/Lore"] .nav-folder-title-content { color: #b2bec3 !important; font-weight: 600; }
+
+.nav-folder-title[data-path="Campaign/Lore/Classes"] .nav-folder-title-content::before { content: "⚔️ "; }
+.nav-folder-title[data-path="Campaign/Lore/Classes"] .nav-folder-title-content { color: #e74c3c !important; }
+
+.nav-folder-title[data-path="Campaign/Lore/Classes/Subclasses"] .nav-folder-title-content::before { content: "🎯 "; }
+.nav-folder-title[data-path="Campaign/Lore/Classes/Subclasses"] .nav-folder-title-content { color: #e67e22 !important; }
+
+.nav-folder-title[data-path="Campaign/Lore/Races"] .nav-folder-title-content::before { content: "🧬 "; }
+.nav-folder-title[data-path="Campaign/Lore/Races"] .nav-folder-title-content { color: #00cec9 !important; }
+
+.nav-folder-title[data-path="Campaign/Lore/Backgrounds"] .nav-folder-title-content::before { content: "📜 "; }
+.nav-folder-title[data-path="Campaign/Lore/Backgrounds"] .nav-folder-title-content { color: #c9a84c !important; }
+
+.nav-folder-title[data-path="Campaign/Lore/Feats"] .nav-folder-title-content::before { content: "⭐ "; }
+.nav-folder-title[data-path="Campaign/Lore/Feats"] .nav-folder-title-content { color: #fdcb6e !important; }
+
+.nav-folder-title[data-path="Campaign/Lore/Conditions"] .nav-folder-title-content::before { content: "💀 "; }
+.nav-folder-title[data-path="Campaign/Lore/Conditions"] .nav-folder-title-content { color: #d63031 !important; }
+
+.nav-folder-title[data-path="Campaign/Lore/Events"] .nav-folder-title-content::before { content: "📅 "; }
+.nav-folder-title[data-path="Campaign/Lore/Events"] .nav-folder-title-content { color: #74b9ff !important; }
+
+.nav-folder-title[data-path="Campaign/Lore/Languages"] .nav-folder-title-content::before { content: "💬 "; }
+.nav-folder-title[data-path="Campaign/Lore/Languages"] .nav-folder-title-content { color: #81ecec !important; }
+
+.nav-folder-title[data-path="Campaign/Lore/Optional Features"] .nav-folder-title-content::before { content: "🔮 "; }
+.nav-folder-title[data-path="Campaign/Lore/Optional Features"] .nav-folder-title-content { color: #a29bfe !important; }
+
+/* ═══════════════════════
+   POSSESSIONS
+   ═══════════════════════ */
+
+.nav-folder-title[data-path="Campaign/Possessions"] .nav-folder-title-content::before { content: "💼 "; }
+.nav-folder-title[data-path="Campaign/Possessions"] .nav-folder-title-content { color: #b2bec3 !important; font-weight: 600; }
+
+.nav-folder-title[data-path="Campaign/Possessions/Items"] .nav-folder-title-content::before { content: "🎒 "; }
+.nav-folder-title[data-path="Campaign/Possessions/Items"] .nav-folder-title-content { color: #00cec9 !important; }
+
+.nav-folder-title[data-path="Campaign/Possessions/Spells"] .nav-folder-title-content::before { content: "🔮 "; }
+.nav-folder-title[data-path="Campaign/Possessions/Spells"] .nav-folder-title-content { color: #a29bfe !important; }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIGHT MODE OVERRIDES
+   Colors above are tuned for dark mode. These selectors use the
+   .theme-light body class Obsidian adds when light mode is active,
+   giving them higher specificity so they win without changing the
+   dark-mode rules above.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Setup guide & how-to ───────────────────────────────────────── */
+.theme-light .nav-file-title[data-path="START HERE.md"] .nav-file-title-content       { color: #1e8449 !important; }
+.theme-light .nav-file-title[data-path="HOW TO USE.md"] .nav-file-title-content       { color: #1a6da8 !important; }
+
+/* ── 1.Tools ─────────────────────────────────────────────────────── */
+.theme-light .nav-folder-title[data-path="1.Tools"] .nav-folder-title-content         { color: #5541c9 !important; }
+.theme-light .nav-file-title[data-path="1.Tools/Homepage.md"] .nav-file-title-content { color: #9a7d0a !important; }
+.theme-light .nav-file-title[data-path="1.Tools/GM Screen.md"] .nav-file-title-content{ color: #c0392b !important; }
+.theme-light .nav-file-title[data-path="1.Tools/Buttons.md"] .nav-file-title-content  { color: #1a6da8 !important; }
+
+/* ── Campaign root ──────────────────────────────────────────────── */
+.theme-light .nav-folder-title[data-path="Campaign"] .nav-folder-title-content        { color: #5d6d7e !important; }
+
+/* ── Characters ─────────────────────────────────────────────────── */
+.theme-light .nav-folder-title[data-path="Campaign/Characters"] .nav-folder-title-content          { color: #4a5568 !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Characters/Players"] .nav-folder-title-content  { color: #9a7d0a !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Characters/NPCs"] .nav-folder-title-content     { color: #4a5568 !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Characters/Deities"] .nav-folder-title-content  { color: #6a1b9a !important; }
+
+/* ── Organizations ──────────────────────────────────────────────── */
+.theme-light .nav-folder-title[data-path="Campaign/Organizations"] .nav-folder-title-content       { color: #1a6da8 !important; }
+
+/* ── Locations ──────────────────────────────────────────────────── */
+.theme-light .nav-folder-title[data-path="Campaign/Planes"] .nav-folder-title-content      { color: #5541c9 !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Regions"] .nav-folder-title-content     { color: #1e8449 !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Settlements"] .nav-folder-title-content { color: #b8520a !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Districts"] .nav-folder-title-content   { color: #b7770d !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Areas"] .nav-folder-title-content       { color: #117a65 !important; }
+
+/* ── Parties ────────────────────────────────────────────────────── */
+.theme-light .nav-folder-title[data-path="Campaign/Parties"] .nav-folder-title-content                   { color: #c0392b !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Parties/Party Dashboards"] .nav-folder-title-content  { color: #c0392b !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Parties/Adventures"] .nav-folder-title-content        { color: #d35400 !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Parties/Quests"] .nav-folder-title-content            { color: #9a7d0a !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Parties/Session Notes"] .nav-folder-title-content     { color: #00897b !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Parties/Encounters"] .nav-folder-title-content        { color: #c0392b !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Parties/Service Requests"] .nav-folder-title-content  { color: #00897b !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Parties/Journey Boards"] .nav-folder-title-content    { color: #d35400 !important; }
+
+/* ── Lore ───────────────────────────────────────────────────────── */
+.theme-light .nav-folder-title[data-path="Campaign/Lore"] .nav-folder-title-content                    { color: #4a5568 !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Lore/Classes"] .nav-folder-title-content            { color: #c0392b !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Lore/Classes/Subclasses"] .nav-folder-title-content { color: #b8520a !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Lore/Races"] .nav-folder-title-content              { color: #00838f !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Lore/Backgrounds"] .nav-folder-title-content        { color: #7d6608 !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Lore/Feats"] .nav-folder-title-content              { color: #b7770d !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Lore/Conditions"] .nav-folder-title-content         { color: #c0392b !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Lore/Events"] .nav-folder-title-content             { color: #1a6da8 !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Lore/Languages"] .nav-folder-title-content          { color: #00838f !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Lore/Optional Features"] .nav-folder-title-content  { color: #5541c9 !important; }
+
+/* ── Possessions ────────────────────────────────────────────────── */
+.theme-light .nav-folder-title[data-path="Campaign/Possessions"] .nav-folder-title-content         { color: #4a5568 !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Possessions/Items"] .nav-folder-title-content   { color: #00838f !important; }
+.theme-light .nav-folder-title[data-path="Campaign/Possessions/Spells"] .nav-folder-title-content  { color: #5541c9 !important; }
