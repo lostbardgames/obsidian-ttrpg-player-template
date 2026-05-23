@@ -21,3 +21,6 @@ __pycache__/
 *.bak
 Player-Vault-*.zip
 files.json
+
+# ── Claude Code context (local only, never pushed) ───────────────────────────
+CLAUDE.md
