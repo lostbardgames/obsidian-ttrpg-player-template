@@ -17,6 +17,7 @@ update flow runs from inside Obsidian — the player never has to open a termina
 import argparse
 import json
 import os
+import re
 import sys
 import shutil
 import urllib.request
@@ -38,7 +39,18 @@ PROTECTED = {
     "z_Assets/Unsorted",
     "z_Excalidraw",
     "z_Uncategorized",
+    "z_Databases/Vault Hub/Player Settings.md",
 }
+
+# Shipped as a first-run default only — never replaced once the player has their own
+# (otherwise every update would reset their open tabs and layout)
+KEEP_IF_EXISTS = {
+    ".obsidian/workspace.json",
+}
+
+SETTINGS_REL = "z_Databases/Vault Hub/Player Settings.md"
+SETTINGS_TEMPLATE = ("---\ntags:\n  - Settings\ncampaignName: ''\ncharacterName: ''\n---\n\n"
+                     "Active campaign and character. Change them with the buttons on the Homepage.\n")
 
 # Tool files that get a .bak backup before overwriting (user may have customised them)
 TOOL_FILES = {
@@ -73,6 +85,27 @@ def download_zip(url, dest):
     req = urllib.request.Request(url, headers={"User-Agent": "LBG-Player-Updater"})
     with urllib.request.urlopen(req, timeout=60) as resp, open(dest, "wb") as f:
         shutil.copyfileobj(resp, f)
+
+
+def _fm_scalar(text, key):
+    m = re.search(rf"(?m)^{key}:[ \t]*(.*)$", text)
+    return m.group(1).strip().strip("'\"") if m else ""
+
+
+def _migrate_active_selection(vault_root, old_text):
+    """Older versions kept the active campaign/character in the Homepage/Player Screen
+    frontmatter, which an update replaces. Move them to the settings note first."""
+    values = {k: _fm_scalar(old_text, k) for k in ("campaignName", "characterName")}
+    values = {k: v for k, v in values.items() if v and v != "My Campaign"}
+    if not values: return
+    path = os.path.join(vault_root, *SETTINGS_REL.split("/"))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    text = open(path, encoding="utf-8").read() if os.path.exists(path) else SETTINGS_TEMPLATE
+    for k, v in values.items():
+        if not _fm_scalar(text, k):                      # never override a choice already made
+            text = re.sub(rf"(?m)^{k}:.*$", lambda m: f"{k}: '{v.replace(chr(39), chr(39)*2)}'", text, count=1)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
 
 
 def is_protected(rel_path):
@@ -112,15 +145,32 @@ def apply_zip(zip_path, vault_root, new_version):
             dest = os.path.join(vault_root, rel)
             os.makedirs(os.path.dirname(dest), exist_ok=True)
 
+            if rel in KEEP_IF_EXISTS and os.path.exists(dest):
+                skipped.append(rel)
+                continue
+
             # Back up tool files before overwriting
+            old_text = ""
             if rel in TOOL_FILES and os.path.exists(dest):
                 bak = dest + ".bak"
                 shutil.copy2(dest, bak)
                 backed_up.append(rel)
+                if rel in ("1.Tools/Homepage.md", "1.Tools/Player Screen.md"):
+                    old_text = open(dest, encoding="utf-8", errors="replace").read()
+                    _migrate_active_selection(vault_root, old_text)
 
             with zf.open(name) as src, open(dest, "wb") as dst:
                 shutil.copyfileobj(src, dst)
             updated.append(rel)
+
+            # Keep the player's current session link on the Player Screen
+            if rel == "1.Tools/Player Screen.md" and _fm_scalar(old_text, "currentSession"):
+                new_text = open(dest, encoding="utf-8").read()
+                new_text = re.sub(r"(?m)^currentSession:.*$",
+                                  lambda m: "currentSession: " + re.search(r"(?m)^currentSession:[ \t]*(.*)$", old_text).group(1),
+                                  new_text, count=1)
+                with open(dest, "w", encoding="utf-8") as f:
+                    f.write(new_text)
 
     # Stamp the new version
     version_file = os.path.join(vault_root, "version.json")

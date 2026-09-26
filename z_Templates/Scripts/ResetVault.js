@@ -43,5 +43,8 @@ module.exports = async (params) => {
     }
   }
 
+  const settings = app.vault.getAbstractFileByPath("z_Databases/Vault Hub/Player Settings.md");
+  if (settings) { try { await app.vault.delete(settings, true); deleted++; } catch (e) { console.warn(e); } }
+
   new Notice(`Reset complete. ${deleted} file(s) deleted.`);
 };

@@ -1,16 +1,36 @@
 ---
 tags:
   - PlayerScreen
-campaignName: My Campaign
-characterName:
 currentSession:
 cssclasses:
   - wide-page
 ---
 
-# ⚔️ Player Screen — `VIEW[{campaignName}][text]`
+# ⚔️ Player Screen — `$= dv.page("z_Databases/Vault Hub/Player Settings")?.campaignName || "My Campaign"`
 
-`INPUT[text(placeholder(Campaign Name)):campaignName]` Character: `INPUT[text(placeholder(Character Name)):characterName]` Session: `INPUT[text(placeholder(Session Recap)):currentSession]`
+> [!column|2 no-t]
+>
+> > **Campaign:** `$= dv.page("z_Databases/Vault Hub/Player Settings")?.campaignName || "My Campaign"`
+> >
+> > ```meta-bind-button
+> > label: "Change Campaign"
+> > style: default
+> > actions:
+> >   - type: command
+> >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000014
+> > ```
+>
+> > **Character:** `$= dv.page("z_Databases/Vault Hub/Player Settings")?.characterName || (dv.pages('"My Character"').length == 1 ? dv.pages('"My Character"')[0].file.name : "None selected")`
+> >
+> > ```meta-bind-button
+> > label: "Change Character"
+> > style: default
+> > actions:
+> >   - type: command
+> >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000015
+> > ```
+
+Session: `INPUT[text(placeholder(Session Recap)):currentSession]`
 
 ---
 
@@ -19,9 +39,11 @@ cssclasses:
 > > [!info|no-t] **⚔️ My Stats**
 > >
 > > ```dataviewjs
-> > const name = dv.current().characterName;
+> > const s = dv.page("z_Databases/Vault Hub/Player Settings");
+> > const all = dv.pages('"My Character"');
+> > const name = s?.characterName || (all.length === 1 ? all[0].file.name : "");
 > > if (!name) {
-> >   dv.paragraph("_Set `characterName` above._");
+> >   dv.paragraph("_No character selected — use **Change Character** above._");
 > > } else {
 > >   const chars = dv.pages('"My Character"').where(c => c.file.name === name);
 > >   if (chars.length === 0) {

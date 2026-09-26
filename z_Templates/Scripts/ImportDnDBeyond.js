@@ -1,3 +1,29 @@
+// ── Active campaign / character (kept in a settings note the updater never overwrites) ──
+
+const SETTINGS_DIR = "z_Databases/Vault Hub";
+const SETTINGS_PATH = `${SETTINGS_DIR}/Player Settings.md`;
+
+async function setActive(app, values) {
+  let file = app.vault.getAbstractFileByPath(SETTINGS_PATH);
+  if (!file) {
+    try { await app.vault.createFolder(SETTINGS_DIR); } catch (_) { /* already exists */ }
+    file = await app.vault.create(
+      SETTINGS_PATH,
+      "---\ntags:\n  - Settings\ncampaignName: ''\ncharacterName: ''\n---\n\nActive campaign and character. Change them with the buttons on the Homepage.\n"
+    );
+  }
+  await app.fileManager.processFrontMatter(file, fm => { Object.assign(fm, values); });
+}
+
+function getSettings(app) {
+  const file = app.vault.getAbstractFileByPath(SETTINGS_PATH);
+  return (file && app.metadataCache.getFileCache(file)?.frontmatter) || {};
+}
+
+function getCharacterFiles(app) {
+  return app.vault.getMarkdownFiles().filter(f => f.path.startsWith("My Character/"));
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 function extractCharId(input) {
@@ -231,6 +257,8 @@ module.exports = async (params) => {
     console.error("[ImportDnDBeyond] result:", result);
     return;
   }
+
+  await setActive(app, result.campaign ? { characterName: result.name, campaignName: result.campaign } : { characterName: result.name });
 
   // ── Success — reload so the new character note and any downloaded art load ──
   new Notice(`✅ Imported ${result.name}! Reloading vault…`, 5000);

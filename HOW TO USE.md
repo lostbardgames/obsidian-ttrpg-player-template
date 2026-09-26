@@ -49,7 +49,7 @@ This guide covers every note type in the player vault — what each one is for, 
 
 ### Homepage — `1.Tools/Homepage`
 
-Your player dashboard. Opens automatically when you launch Obsidian. Shows your character's stats, active quests, recent session recaps, and quick-create buttons for the most common note types.
+Your player dashboard. Opens automatically when you launch Obsidian. The **Change Campaign** and **Change Character** buttons at the top pop up a picker; your choice is remembered (it survives reloads and updates), and creating or importing a character selects it automatically. Shows your character's stats, active quests, recent session recaps, and quick-create buttons for the most common note types.
 
 ### Player Screen — `1.Tools/Player Screen`
 

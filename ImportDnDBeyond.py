@@ -761,6 +761,7 @@ def main():
     # Default the campaign to the one this character belongs to on D&D Beyond
     if not campaign_name:
         campaign_name = (data.get("campaign") or {}).get("name") or ""
+    campaign_display = campaign_name
     campaign_name = campaign_name.replace("'", "''")  # escape for single-quoted YAML
 
     # ── Basic info ─────────────────────────────────────────────────────────
@@ -1348,7 +1349,7 @@ SORT sessionNumber DESC
     with open(os.path.join(vault_path, *file_rel.split("/")), "w", encoding="utf-8") as fh:
         fh.write(content)
 
-    print(json.dumps({"success": True, "file": file_rel, "name": char_name}))
+    print(json.dumps({"success": True, "file": file_rel, "name": char_name, "campaign": campaign_display}))
 
 
 if __name__ == "__main__":

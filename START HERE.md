@@ -123,8 +123,8 @@ Choose one:
 
 **Option B — Create manually**
 1. Open **1.Tools/Homepage.md**
-2. Set your **Campaign Name** and **Character Name** using the inline fields at the top
-3. Click **New Character** in the Quick Create panel — your character sheet will open automatically
+2. Click **New Character** in the Quick Create panel — your character sheet will open automatically and becomes your active character
+3. Use **Change Campaign** to set the campaign name shown on the Homepage
 4. Fill in your character details and start using the vault!
 
 > [!tip] Requires Python 3

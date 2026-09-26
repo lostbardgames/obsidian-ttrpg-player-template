@@ -246,6 +246,44 @@
           }
         ]
       }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000014",
+      "name": "Change Campaign",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000014",
+        "name": "Change Campaign",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000014",
+            "name": "SelectCampaign.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/SelectCampaign.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000015",
+      "name": "Change Character",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000015",
+        "name": "Change Character",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000015",
+            "name": "SelectCharacter.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/SelectCharacter.js",
+            "settings": {}
+          }
+        ]
+      }
     }
   ],
   "inputPrompt": "single-line",

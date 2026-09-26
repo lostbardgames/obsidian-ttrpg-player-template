@@ -24,30 +24,28 @@ function getCharacterFiles(app) {
   return app.vault.getMarkdownFiles().filter(f => f.path.startsWith("My Character/"));
 }
 
+// ── Main ───────────────────────────────────────────────────────────────────
+
 module.exports = async (params) => {
   const { app, quickAddApi: qa } = params;
 
-  const name = await qa.inputPrompt("New Character", "Enter your character's name...");
-  if (!name) return;
-
-  const destPath = `My Character/${name}.md`;
-  if (app.vault.getAbstractFileByPath(destPath)) {
-    new Notice(`"${name}" already exists!`);
+  const chars = getCharacterFiles(app);
+  if (chars.length === 0) {
+    new Notice("No characters yet — use New Character or Import Character from D&D Beyond first.", 8000);
     return;
   }
 
-  const tpl = app.vault.getAbstractFileByPath("z_Templates/Characters/Template - My Character.md");
-  if (!tpl) { new Notice("Character template not found!"); return; }
+  const names = chars.map(f => f.basename).sort();
+  const current = getSettings(app).characterName;
+  const labels = names.map(n => (n === current ? `${n}  ✓ (active)` : n));
+  const picked = await qa.suggester(labels, names);
+  if (!picked) return;
 
-  const content = await app.vault.read(tpl);
-  const file = await app.vault.create(destPath, content);
-  await setActive(app, { characterName: name });
-  await getMainLeaf(app).openFile(file);
-  new Notice(`"${name}" created!`);
+  const file = chars.find(f => f.basename === picked);
+  const fm = app.metadataCache.getFileCache(file)?.frontmatter || {};
+  const values = { characterName: picked };
+  if (fm.campaign) values.campaignName = String(fm.campaign);   // follow the character's campaign
+
+  await setActive(app, values);
+  new Notice(`⚔️ Active character: ${picked}${values.campaignName ? `\nCampaign: ${values.campaignName}` : ""}`, 5000);
 };
-
-function getMainLeaf(app) {
-  return app.workspace.getLeavesOfType("markdown")
-    .find(l => l.view?.file?.path !== "1.Tools/Buttons.md")
-    ?? app.workspace.getLeaf();
-}
