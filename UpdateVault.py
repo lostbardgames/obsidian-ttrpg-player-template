@@ -3,8 +3,18 @@
 UpdateVault.py — LBG TTRPG Player Template updater
 Checks GitHub for a newer version and updates template files.
 Your campaign data (My Character/, Campaign Notes/, Possessions/, Lore/) is NEVER touched.
+
+Modes:
+  (no flags)        Interactive terminal mode — prompts for confirmation.
+  --check           Machine mode: prints one JSON line describing update status, no prompts.
+  --apply           Machine mode: downloads and applies the latest release, no prompts.
+                     Prints one JSON line with the result.
+
+--check and --apply are used by z_Templates/Scripts/UpdateVault.js so the whole
+update flow runs from inside Obsidian — the player never has to open a terminal.
 """
 
+import argparse
 import json
 import os
 import sys
@@ -16,8 +26,7 @@ import tempfile
 
 REPO = "lostbardgames/obsidian-ttrpg-player-template"
 API_URL = f"https://api.github.com/repos/{REPO}/releases/latest"
-VAULT_ROOT = os.path.dirname(os.path.abspath(__file__))
-VERSION_FILE = os.path.join(VAULT_ROOT, "version.json")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Folders and files that contain campaign data — NEVER touched by the updater
 PROTECTED = {
@@ -41,9 +50,10 @@ TOOL_FILES = {
 }
 
 
-def get_current_version():
+def get_current_version(vault_root):
+    version_file = os.path.join(vault_root, "version.json")
     try:
-        with open(VERSION_FILE) as f:
+        with open(version_file) as f:
             return json.load(f).get("version", "0.0.0")
     except Exception:
         return "0.0.0"
@@ -55,16 +65,11 @@ def version_tuple(v):
 
 def fetch_latest_release():
     req = urllib.request.Request(API_URL, headers={"User-Agent": "LBG-Player-Updater"})
-    try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            return json.loads(resp.read())
-    except urllib.error.URLError as e:
-        print(f"  ✗ Could not reach GitHub: {e}")
-        return None
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        return json.loads(resp.read())
 
 
 def download_zip(url, dest):
-    print(f"  Downloading update...")
     req = urllib.request.Request(url, headers={"User-Agent": "LBG-Player-Updater"})
     with urllib.request.urlopen(req, timeout=60) as resp, open(dest, "wb") as f:
         shutil.copyfileobj(resp, f)
@@ -78,7 +83,13 @@ def is_protected(rel_path):
     return False
 
 
-def update_vault(zip_path, new_version):
+def get_zip_url(release):
+    assets = release.get("assets", [])
+    zip_asset = next((a for a in assets if a["name"].endswith(".zip")), None)
+    return zip_asset["browser_download_url"] if zip_asset else release.get("zipball_url")
+
+
+def apply_zip(zip_path, vault_root, new_version):
     with zipfile.ZipFile(zip_path) as zf:
         names = zf.namelist()
         # The zip has a top-level folder like "obsidian-ttrpg-player-template-1.0.1/"
@@ -98,7 +109,7 @@ def update_vault(zip_path, new_version):
                 skipped.append(rel)
                 continue
 
-            dest = os.path.join(VAULT_ROOT, rel)
+            dest = os.path.join(vault_root, rel)
             os.makedirs(os.path.dirname(dest), exist_ok=True)
 
             # Back up tool files before overwriting
@@ -112,42 +123,116 @@ def update_vault(zip_path, new_version):
             updated.append(rel)
 
     # Stamp the new version
-    with open(VERSION_FILE, "w") as f:
+    version_file = os.path.join(vault_root, "version.json")
+    with open(version_file, "w") as f:
         json.dump({"version": new_version}, f, indent=2)
 
     return updated, backed_up, skipped
 
 
-def main():
+def check_for_update(vault_root):
+    """Pure check — no prompts, no side effects. Returns a JSON-serializable dict."""
+    current = get_current_version(vault_root)
+    try:
+        release = fetch_latest_release()
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return {"status": "failed", "current_version": current,
+                     "error": "No release has been published yet for this template."}
+        return {"status": "failed", "current_version": current, "error": f"GitHub error: {e}"}
+    except (urllib.error.URLError, TimeoutError) as e:
+        return {"status": "failed", "current_version": current, "error": f"Could not reach GitHub: {e}"}
+    except Exception as e:
+        return {"status": "failed", "current_version": current, "error": str(e)}
+
+    latest_tag = release.get("tag_name", "")
+    latest = latest_tag.lstrip("v")
+    if not latest:
+        return {"status": "failed", "current_version": current, "error": "No release found on GitHub."}
+
+    if version_tuple(latest) <= version_tuple(current):
+        return {"status": "up_to_date", "current_version": current, "latest_version": latest}
+
+    zip_url = get_zip_url(release)
+    if not zip_url:
+        return {"status": "failed", "current_version": current, "error": "No downloadable asset found in latest release."}
+
+    return {
+        "status": "update_available",
+        "current_version": current,
+        "latest_version": latest,
+        "latest_tag": latest_tag,
+        "changelog": (release.get("body") or "").strip(),
+        "zip_url": zip_url,
+    }
+
+
+def apply_update(vault_root):
+    """Fetches the latest release and applies it — no prompts. Returns a JSON-serializable dict."""
+    current = get_current_version(vault_root)
+    try:
+        release = fetch_latest_release()
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return {"status": "failed", "error": "No release has been published yet for this template."}
+        return {"status": "failed", "error": f"GitHub error: {e}"}
+    except Exception as e:
+        return {"status": "failed", "error": f"Could not reach GitHub: {e}"}
+
+    latest_tag = release.get("tag_name", "")
+    latest = latest_tag.lstrip("v")
+    if not latest:
+        return {"status": "failed", "error": "No release found on GitHub."}
+
+    if version_tuple(latest) <= version_tuple(current):
+        return {"status": "success", "new_version": current, "updated": [], "backed_up": [], "skipped": [],
+                "note": "Already up to date."}
+
+    zip_url = get_zip_url(release)
+    if not zip_url:
+        return {"status": "failed", "error": "No downloadable asset found in latest release."}
+
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            zip_path = os.path.join(tmp, "update.zip")
+            download_zip(zip_url, zip_path)
+            updated, backed_up, skipped = apply_zip(zip_path, vault_root, latest)
+    except Exception as e:
+        return {"status": "failed", "error": str(e)}
+
+    return {
+        "status": "success",
+        "new_version": latest,
+        "updated": updated,
+        "backed_up": backed_up,
+        "skipped": skipped,
+    }
+
+
+def interactive_main(vault_root):
     print("=" * 60)
     print("  LBG TTRPG Player Template — Update Check")
     print("=" * 60)
 
-    current = get_current_version()
+    current = get_current_version(vault_root)
     print(f"\n  Installed version : v{current}")
     print("  Checking GitHub for updates...\n")
 
-    release = fetch_latest_release()
-    if not release:
-        print("  Could not fetch release info. Check your internet connection.")
+    check = check_for_update(vault_root)
+    if check["status"] == "failed":
+        print(f"  ✗ {check['error']}")
         sys.exit(1)
 
-    latest = release.get("tag_name", "").lstrip("v")
-    if not latest:
-        print("  No release found on GitHub.")
-        sys.exit(1)
-
-    print(f"  Latest version    : v{latest}")
-
-    if version_tuple(latest) <= version_tuple(current):
+    if check["status"] == "up_to_date":
         print("\n  ✓ You are already on the latest version. Nothing to do.")
         sys.exit(0)
 
+    latest = check["latest_version"]
+    print(f"  Latest version    : v{latest}")
     print(f"\n  A new version is available: v{current} → v{latest}")
-    body = release.get("body", "").strip()
-    if body:
+    if check.get("changelog"):
         print("\n  Release notes:")
-        for line in body.splitlines()[:20]:
+        for line in check["changelog"].splitlines()[:20]:
             print(f"    {line}")
     print()
 
@@ -156,32 +241,44 @@ def main():
         print("  Update cancelled.")
         sys.exit(0)
 
-    # Find the zip asset
-    assets = release.get("assets", [])
-    zip_asset = next((a for a in assets if a["name"].endswith(".zip")), None)
-    if not zip_asset:
-        # Fall back to source zip
-        zip_url = release.get("zipball_url")
-    else:
-        zip_url = zip_asset["browser_download_url"]
+    print("  Downloading and applying update...")
+    result = apply_update(vault_root)
 
-    if not zip_url:
-        print("  ✗ No downloadable asset found in this release.")
+    if result["status"] != "success":
+        print(f"\n  ✗ Update failed: {result.get('error', 'Unknown error')}")
         sys.exit(1)
 
-    with tempfile.TemporaryDirectory() as tmp:
-        zip_path = os.path.join(tmp, "update.zip")
-        download_zip(zip_url, zip_path)
-        updated, backed_up, skipped = update_vault(zip_path, latest)
-
-    print(f"\n  ✓ Updated to v{latest}")
-    print(f"    {len(updated)} file(s) updated")
-    if backed_up:
-        print(f"    {len(backed_up)} tool file(s) backed up as .bak before overwriting:")
-        for f in backed_up:
+    print(f"\n  ✓ Updated to v{result['new_version']}")
+    print(f"    {len(result['updated'])} file(s) updated")
+    if result["backed_up"]:
+        print(f"    {len(result['backed_up'])} tool file(s) backed up as .bak before overwriting:")
+        for f in result["backed_up"]:
             print(f"      • {f}")
-    print(f"    {len(skipped)} campaign data file(s) left untouched")
+    print(f"    {len(result['skipped'])} campaign data file(s) left untouched")
     print("\n  Reopen Obsidian to apply the update.")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="LBG TTRPG Player Template updater")
+    parser.add_argument("--vault", dest="vault_path", default=SCRIPT_DIR,
+                         help="Path to the vault root (defaults to this script's own directory)")
+    parser.add_argument("--check", action="store_true",
+                         help="Check for updates only; print JSON result, no prompts")
+    parser.add_argument("--apply", action="store_true",
+                         help="Download and apply the latest release; print JSON result, no prompts")
+    args = parser.parse_args()
+
+    vault_root = os.path.abspath(args.vault_path)
+
+    if args.check:
+        print(json.dumps(check_for_update(vault_root)))
+        return
+
+    if args.apply:
+        print(json.dumps(apply_update(vault_root)))
+        return
+
+    interactive_main(vault_root)
 
 
 if __name__ == "__main__":

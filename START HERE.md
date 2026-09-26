@@ -85,12 +85,49 @@ The vault's icons and colors in the file explorer require two CSS snippets to be
 
 ---
 
-## Step 5 — Create Your Character
+## Step 5 — (Optional) Import 5e Content
 
+The vault includes a one-click importer that downloads reference notes from 5e.tools for spells, items, classes, races, backgrounds, feats, languages, deities, conditions, and optional features — handy for looking up rules for your character without leaving Obsidian.
+
+> [!warning] License Disclaimer
+> You are responsible for ensuring you have a valid license or legal right to the content you import. Content from the **SRD 5.1** is freely available under the Creative Commons license. All other sourcebooks require a valid purchase from the publisher.
+
+**Requirements:** Python 3 must be installed. The importer will detect it automatically and offer to install it if missing.
+
+**To import:**
+1. Open **1.Tools/Buttons.md**
+2. Scroll to the **🗄️ Vault** section
+3. Click **"Import 5e.tools Data"**
+4. Follow the prompts:
+   - Choose your **source** (WotC official / specific books / all sources)
+   - Select **which books** (if using specific books mode)
+   - Select **content types** to import
+   - Confirm and wait — a notification appears when complete
+
+> [!tip] Safe to re-run
+> The importer never overwrites existing notes. You can run it multiple times to add new content types or books without affecting notes you've already edited.
+
+---
+
+## Step 6 — Create Your Character
+
+Choose one:
+
+**Option A — Import from D&D Beyond**
+1. Make sure your D&D Beyond character sheet is set to **Public** (Share → Visibility)
+2. Open **1.Tools/Buttons.md**
+3. Click **"Import Character from D&D Beyond"**
+4. Paste your character's URL or ID, optionally enter a campaign name, and confirm
+5. Your full character sheet is generated automatically — stats, skills, spells, inventory, and features all filled in
+
+**Option B — Create manually**
 1. Open **1.Tools/Homepage.md**
 2. Set your **Campaign Name** and **Character Name** using the inline fields at the top
 3. Click **New Character** in the Quick Create panel — your character sheet will open automatically
 4. Fill in your character details and start using the vault!
+
+> [!tip] Requires Python 3
+> The D&D Beyond importer needs Python 3, same as the 5e.tools importer above. The button will offer to install it automatically if it's missing.
 
 ---
 
@@ -117,7 +154,7 @@ Campaign Notes/
 Possessions/
 ├── Items/            Your items and equipment
 └── Spells/           Your spells (if applicable)
-Lore/                 World lore and reference notes
+Lore/                 World lore and reference notes (5e.tools imports land here)
 ```
 
 ### 🎨 Icon & Color System

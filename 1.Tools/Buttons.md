@@ -12,6 +12,14 @@
 > >   - type: command
 > >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000001
 > > ```
+> >
+> > ```meta-bind-button
+> > label: "Import Character from D&D Beyond"
+> > style: primary
+> > actions:
+> >   - type: command
+> >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000012
+> > ```
 >
 > > [!note|no-t]
 > >
@@ -95,7 +103,24 @@
 
 ## 🗄️ Vault
 
-> [!column|2 no-t]
+> [!column|3 no-t]
+>
+> > [!success|no-t] **Import Data**
+> >
+> > ```meta-bind-button
+> > label: "Import 5e.tools Data"
+> > style: primary
+> > actions:
+> >   - type: command
+> >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000011
+> > ```
+> >
+> > Downloads reference notes for spells, items, classes, races, backgrounds, feats, languages, deities, conditions, and optional features from 5e.tools. Pick WotC official, specific books, or all sources.
+> >
+> > Non-destructive — existing notes are never overwritten, so it's safe to re-run. If Python 3 is not installed, the button will offer to install it for you. Requires an internet connection.
+> >
+> > > [!warning] ⚠️ License Disclaimer
+> > > You are responsible for ensuring you have a valid license or legal right to access the content you import. This tool does not grant any rights to copyrighted material. Content from the SRD 5.1 is available under the Creative Commons license. All other sourcebooks require a valid purchase or license from the publisher.
 >
 > > [!info|no-t] **Update Vault**
 > >

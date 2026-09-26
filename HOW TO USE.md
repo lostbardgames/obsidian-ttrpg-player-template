@@ -28,6 +28,8 @@ This guide covers every note type in the player vault — what each one is for, 
    - [[#Items]]
    - [[#Spells]]
 10. [[#Lore Notes]]
+11. [[#Importing 5e Content]]
+12. [[#Importing from D&D Beyond]]
 
 ---
 
@@ -63,7 +65,7 @@ Every note type has a creation button here. When you need to create something th
 
 **What it is:** Your character sheet — the central hub of your vault.
 
-**Create it:** Homepage → Quick Create → **New Character**, or Buttons → **New Character**.
+**Create it:** Homepage → Quick Create → **New Character**, or Buttons → **New Character**. Alternatively, Buttons → **Import Character from D&D Beyond** builds the whole sheet automatically from an existing D&D Beyond character — see [[#Importing from D&D Beyond]].
 
 **Where it's stored:** `My Character/`
 
@@ -301,6 +303,102 @@ Use a consistent format: `Session 01 — The Road to Millhaven`. The session num
 The `Lore/` folder is a free-form area for world lore your character has learned — histories, religious texts, faction details, monster knowledge, anything your character would know or have researched. Create notes here manually or use the Buttons page.
 
 Link Lore notes from your Journal entries and Session Recaps to build a living record of the world as your character understands it.
+
+---
+
+## Importing 5e Content
+
+The vault includes a one-click importer that downloads reference notes from 5e.tools — spells, items, classes, races, backgrounds, feats, languages, deities, conditions, and optional features. Useful for looking up rules, building your character, or researching lore without leaving Obsidian.
+
+> [!warning] License Disclaimer
+> You are responsible for ensuring you have a valid license or legal right to the content you import. **SRD 5.1** content is freely available under the Creative Commons license. All other sourcebooks require a valid purchase from the publisher.
+
+### Running the Importer
+
+1. Open [[1.Tools/Buttons|Buttons]]
+2. Scroll to the **Vault** section
+3. Click **Import 5e.tools Data**
+4. Follow the prompts:
+
+**Step 1 — Choose your source:**
+- **WotC Official** — imports from all official Wizards of the Coast books you own
+- **Specific Books** — opens a multi-select list so you can choose exactly which books to import from
+- **All Sources** — includes third-party and community content
+
+**Step 2 — Select books** *(Specific Books mode only):*
+- A scrollable list appears with all available source codes
+- Use **Select All** or **Clear All** for bulk selection
+- Toggle individual books on/off
+- Select **Done** when finished
+
+**Step 3 — Choose content types:**
+Select any combination of: Spells, Items, Classes, Races, Feats, Backgrounds, Languages, Deities, Conditions, Optional Features
+
+**Step 4 — Confirm and wait:**
+- A summary shows what will be imported
+- Confirm to begin — a notification appears when complete
+- Large imports (all spells, all items) may take a few minutes
+
+> [!tip] Safe to Re-run
+> The importer never overwrites notes you've already edited. Run it again any time to add new content types or books without affecting existing notes.
+
+> [!info] Python Required
+> The importer requires Python 3. If it isn't installed, the button will detect this and offer to install it automatically.
+
+### Where Imported Content Lives
+
+| Content Type | Folder |
+|---|---|
+| Spells | `Possessions/Spells/` |
+| Items | `Possessions/Items/` |
+| Classes | `Lore/Classes/` |
+| Subclasses | `Lore/Classes/Subclasses/` |
+| Races | `Lore/Races/` |
+| Backgrounds | `Lore/Backgrounds/` |
+| Languages | `Lore/Languages/` |
+| Deities | `Lore/Deities/` |
+| Feats | `Lore/Feats/` |
+| Conditions | `Lore/Conditions/` |
+| Optional Features | `Lore/Optional Features/` |
+
+Once imported, link to these notes from your character sheet, journal entries, and session recaps — they'll appear as colored, icon-tagged links automatically.
+
+---
+
+## Importing from D&D Beyond
+
+If you already have a character built on D&D Beyond, you can generate your entire character sheet from it in one click instead of filling it in by hand.
+
+> [!info] Character Must Be Public
+> Go to your D&D Beyond character sheet → **Share** → set visibility to **Public**. The importer can't read private characters.
+
+### Running the Importer
+
+1. Open [[1.Tools/Buttons|Buttons]]
+2. Scroll to the **Character** section
+3. Click **Import Character from D&D Beyond**
+4. Paste your character's D&D Beyond URL (or just the numeric character ID) when prompted
+5. Optionally enter a campaign name — this fills the **Campaign** field on your character sheet
+6. Wait for the import to finish — the vault reloads automatically when it's done
+
+### What Gets Imported
+
+- Species, class, subclass, background, alignment, gender, age
+- Ability scores, saving throws, skill proficiencies and expertise
+- HP, AC, speed, initiative, passive Perception/Insight/Investigation
+- Languages, feats, class features, and racial traits (linked to matching notes in `Lore/` if you've already run the 5e.tools importer)
+- Spells, organized by level, with spell save DC and attack bonus if you're a spellcaster
+- Inventory, with links to matching notes in `Possessions/Items/`
+- Personality traits, ideals, bonds, and flaws
+- Your character's portrait, if one is set on D&D Beyond (saved to `z_Assets/Character/`)
+
+The note is written to `My Character/{Character Name}.md` using the same layout as a manually-created character sheet, so everything — the infobox, session history, goals, backstory sections — works exactly the same afterward.
+
+> [!info] Python Required
+> Like the 5e.tools importer, this requires Python 3. The button will detect it automatically and offer to install it if missing.
+
+> [!warning] One Character at a Time
+> This vault is built around a single character. If `My Character/` already has a note in it, the importer will ask you to confirm before adding another.
 
 ---
 
