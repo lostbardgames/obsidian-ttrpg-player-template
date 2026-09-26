@@ -157,8 +157,18 @@ module.exports = async (params) => {
     return;
   }
 
+  // Multi mode: update the active character; otherwise ask when there are several
+  const SETTINGS_PATH = "z_Databases/Vault Hub/Player Settings.md";
+  let multi = false;
+  try { multi = /^vaultMode:\s*['"]?multi['"]?\s*$/m.test(await app.vault.adapter.read(SETTINGS_PATH)); } catch (_) { /* no settings yet */ }
+  const sf = app.vault.getAbstractFileByPath(SETTINGS_PATH);
+  const activeName = (sf && app.metadataCache.getFileCache(sf)?.frontmatter?.characterName) || "";
+  const activeLinked = linked.find(l => l.file.basename === activeName);
+
   let target = linked[0];
-  if (linked.length > 1) {
+  if (multi && activeLinked) {
+    target = activeLinked;
+  } else if (linked.length > 1) {
     const names = linked.map(l => l.file.basename);
     const chosen = await qa.suggester(names, names);
     if (!chosen) return;

@@ -30,6 +30,7 @@ This guide covers every note type in the player vault — what each one is for, 
 10. [[#Lore Notes]]
 11. [[#Importing 5e Content]]
 12. [[#Importing from D&D Beyond]]
+13. [[#Single vs. Multiple Characters]]
 
 ---
 
@@ -49,7 +50,7 @@ This guide covers every note type in the player vault — what each one is for, 
 
 ### Homepage — `1.Tools/Homepage`
 
-Your player dashboard. Opens automatically when you launch Obsidian. The **Change Campaign** and **Change Character** buttons at the top pop up a picker; your choice is remembered (it survives reloads and updates), and creating or importing a character selects it automatically. Shows your character's stats, active quests, recent session recaps, and quick-create buttons for the most common note types.
+Your player dashboard. Opens automatically when you launch Obsidian. In a multiple-character vault, the **Change Campaign** and **Change Character** buttons at the top pop up a picker; your choice is remembered (it survives reloads and updates), and creating or importing a character selects it automatically. See [[#Single vs. Multiple Characters]]. Shows your character's stats, active quests, recent session recaps, and quick-create buttons for the most common note types.
 
 ### Player Screen — `1.Tools/Player Screen`
 
@@ -410,8 +411,40 @@ The note is written to `My Character/{Character Name}.md` using the same layout 
 > [!info] Python Required
 > Like the 5e.tools importer, this requires Python 3. The button will detect it automatically and offer to install it if missing.
 
-> [!warning] One Character at a Time
-> This vault is built around a single character. If `My Character/` already has a note in it, the importer will ask you to confirm before adding another.
+> [!info] More than one character
+> A single-character vault won't import a second character until you convert it to multiple characters (the importer offers to do this). In a multiple-character vault you can import as many as you like — each becomes the active character when imported.
+
+---
+
+## Single vs. Multiple Characters
+
+You choose a vault type the first time you use the vault (a welcome card on the Homepage, or the first time you create a character).
+
+### One character, one campaign
+
+Everything is yours: no pickers, no filtering. The Homepage shows your one character and a **Rename campaign** button. To add a second character later, convert to multiple characters (below).
+
+### Several characters or campaigns
+
+Notes are filed by campaign or by character, and the Homepage and Player Screen show only the **active** campaign and character — switch with **Change Character** (the campaign follows the character) or **Change Campaign**.
+
+| Shared by everyone in a campaign | Belongs to one character |
+|---|---|
+| Quests, NPCs Known, Locations, Session Recaps | Journal entries, Items, Spells (and the character sheet itself) |
+
+- **You don't have to do anything.** Every **New …** button tags the new note with your active campaign/character automatically, and pickers (for example the session you attach a quest to) only offer that campaign's notes.
+- **Pick a character first.** With several characters and none selected, the Homepage asks you to pick one instead of showing everything mixed together.
+- **Unfiled notes.** Notes that belong to nobody (created by hand, or from before you switched) show for everyone, and a warning appears with an **Assign unfiled notes** button that gives them to the active character and campaign. Notes that already belong to someone are never reassigned.
+- **File explorer.** Files still live in the same folders; only the Homepage and Player Screen are filtered.
+- **Reset Vault** lets you reset just the active character (sheet, journal, items, spells), just the active campaign (quests, NPCs, locations, session recaps), or everything.
+- **D&D Beyond.** **Update Character from D&D Beyond** updates the active character.
+
+### Converting from one character to several
+
+**1.Tools/Buttons.md → Vault → Convert to multiple characters.** It asks for the campaign name for your existing notes, then assigns every existing note to your current character and campaign — nothing is deleted. **This is one-way: a vault can't be converted back to single-character**, and Reset Vault never changes your vault type.
+
+> [!info] Your reference library isn't scoped
+> Notes imported from 5e.tools (spells, items, classes…) are shared reference material. They never appear in your Items/Spells lists and are never assigned to anyone.
 
 ---
 

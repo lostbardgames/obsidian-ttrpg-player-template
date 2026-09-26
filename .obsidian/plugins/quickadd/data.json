@@ -284,6 +284,44 @@
           }
         ]
       }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000016",
+      "name": "Vault Type",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000016",
+        "name": "Vault Type",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000016",
+            "name": "VaultMode.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/VaultMode.js",
+            "settings": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000017",
+      "name": "Assign Unfiled Notes",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000017",
+        "name": "Assign Unfiled Notes",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000017",
+            "name": "AssignUnfiledNotes.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/AssignUnfiledNotes.js",
+            "settings": {}
+          }
+        ]
+      }
     }
   ],
   "inputPrompt": "single-line",

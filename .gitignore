@@ -25,3 +25,6 @@ files.json
 
 # ── Claude Code context (local only, never pushed) ───────────────────────────
 CLAUDE.md
+
+# ── Local dev test harnesses (mock Obsidian/Dataview; never shipped) ─────────
+dev-tests/

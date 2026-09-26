@@ -24,6 +24,34 @@ function getCharacterFiles(app) {
   return app.vault.getMarkdownFiles().filter(f => f.path.startsWith("My Character/"));
 }
 
+// Read fresh from disk (not the metadata cache) so a just-changed mode is seen immediately
+async function getMode(app) {
+  try {
+    const m = (await app.vault.adapter.read(SETTINGS_PATH)).match(/^vaultMode:\s*['"]?(single|multi)['"]?\s*$/m);
+    return m ? m[1] : null;
+  } catch (_) { return null; }
+}
+
+// Decide/verify the vault type before a character is created. Returns false to stop.
+async function characterGate(app, qa) {
+  let mode = await getMode(app);
+  if (!mode) {                                   // first time: choose the vault type
+    await qa.executeChoice("Vault Type");
+    mode = await getMode(app);
+    if (!mode) return false;
+  }
+  if (mode === "single" && getCharacterFiles(app).length > 0) {
+    const go = await qa.yesNoPrompt(
+      "This vault is set up for one character",
+      "You already have a character. To add another, convert this vault to multiple-character mode.\n\nThis is a one-way change and nothing is deleted.\n\nConvert now?"
+    );
+    if (!go) return false;
+    await qa.executeChoice("Vault Type");
+    if ((await getMode(app)) !== "multi") return false;
+  }
+  return true;
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 function extractCharId(input) {
@@ -166,6 +194,8 @@ module.exports = async (params) => {
   const { app, quickAddApi: qa } = params;
   const vaultPath = app.vault.adapter.basePath;
 
+  if (!(await characterGate(app, qa))) return;
+
   // ── Character URL / ID ─────────────────────────────────────────────────────
   const input = await qa.inputPrompt(
     "D&D Beyond character URL or ID",
@@ -191,17 +221,6 @@ module.exports = async (params) => {
       if (!goOn) return;
       break;
     }
-  }
-
-  // Overwrite guard — this vault holds one character per person, not one per party
-  const existing = app.vault.getMarkdownFiles().filter(f => f.path.startsWith("My Character/"));
-  if (existing.length > 0) {
-    const names = existing.map(f => f.basename).join(", ");
-    const proceed = await qa.yesNoPrompt(
-      "Character already exists",
-      `My Character/ already has: ${names}\n\nImporting will create an additional file there (or overwrite one with the same name). Continue?`
-    );
-    if (!proceed) return;
   }
 
   // ── Campaign name (optional, plain text — no party system in this vault) ───

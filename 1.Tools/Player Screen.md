@@ -8,27 +8,46 @@ cssclasses:
 
 # ⚔️ Player Screen — `$= dv.page("z_Databases/Vault Hub/Player Settings")?.campaignName || "My Campaign"`
 
-> [!column|2 no-t]
->
-> > **Campaign:** `$= dv.page("z_Databases/Vault Hub/Player Settings")?.campaignName || "My Campaign"`
-> >
-> > ```meta-bind-button
-> > label: "Change Campaign"
-> > style: primary
-> > actions:
-> >   - type: command
-> >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000014
-> > ```
->
-> > **Character:** `$= dv.page("z_Databases/Vault Hub/Player Settings")?.characterName || (dv.pages('"My Character"').length == 1 ? dv.pages('"My Character"')[0].file.name : "None selected")`
-> >
-> > ```meta-bind-button
-> > label: "Change Character"
-> > style: primary
-> > actions:
-> >   - type: command
-> >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000015
-> > ```
+```dataviewjs
+const S = dv.page("z_Databases/Vault Hub/Player Settings") ?? {};
+const mode = S.vaultMode ?? null;
+const arr = v => v == null ? [] : (typeof v === "object" && !v.path && Array.isArray(v.values)) ? v.values : Array.isArray(v) ? v : [v];
+const nm = x => String(x?.path ? x.path.split("/").pop().replace(/\.md$/, "") : x ?? "").replace(/^\[\[|\]\]$/g, "").split("|")[0].split("/").pop().trim();
+const chars = dv.pages('"My Character"');
+const activeChar = S.characterName || (chars.length === 1 ? chars[0].file.name : "");
+const activeCamp = S.campaignName || "";
+const isLib = p => !!p.import_source;
+const hasTag = (p, t) => arr(p.tags).includes(t);
+const mine = (p, kind) => {
+  if (mode !== "multi") return true;
+  const have = kind === "campaign" ? arr(p.campaign).map(x => String(x).trim()).filter(Boolean) : arr(p.character ?? p.owner).map(nm).filter(Boolean);
+  const want = kind === "campaign" ? activeCamp : activeChar;
+  return have.length === 0 || !want || have.includes(want);
+};
+const run = n => app.commands.executeCommandById(`quickadd:choice:p1b2c3d4-0001-4000-8000-0000000000${n}`);
+const btn = (label, n) => { const b = dv.container.createEl("button", { text: label, cls: "mb-button-inner mod-cta" }); b.style.marginRight = "8px"; b.onclick = () => run(n); };
+const unassigned = () => {
+  let n = 0;
+  for (const d of ["Session Recaps", "Quests", "NPCs Known", "Locations"]) n += dv.pages(`"Campaign Notes/${d}"`).where(p => !arr(p.campaign).some(x => String(x).trim())).length;
+  n += dv.pages('"Campaign Notes/Journal"').where(p => !arr(p.character).map(nm).some(Boolean)).length;
+  n += dv.pages('"Possessions/Items"').where(p => !isLib(p) && !arr(p.owner).map(nm).some(Boolean)).length;
+  n += dv.pages('"Possessions/Spells"').where(p => !isLib(p) && !arr(p.character).map(nm).some(Boolean)).length;
+  return n;
+};
+if (!mode) {
+  dv.paragraph("**👋 Welcome!** Before you start, choose how you'll use this vault — one character in one campaign, or several characters and campaigns that each keep their own notes. It takes a few seconds.");
+  btn("Choose vault type", 16);
+} else if (mode === "single") {
+  dv.paragraph(`**Campaign:** ${activeCamp || "My Campaign"}`);
+  btn("Rename campaign", 14);
+} else {
+  dv.paragraph(`**Campaign:** ${activeCamp || "—"} &nbsp;·&nbsp; **Character:** ${activeChar || "—"}`);
+  if (!activeChar) dv.paragraph("⚠️ _Pick a character to see only their notes._");
+  btn("Change Campaign", 14); btn("Change Character", 15);
+  const n = unassigned();
+  if (n > 0) { dv.paragraph(`⚠️ ${n} note(s) aren't assigned to a character or campaign yet, so they show for everyone.`); btn("Assign unfiled notes", 17); }
+}
+```
 
 Session: `INPUT[text(placeholder(Session Recap)):currentSession]`
 
@@ -39,17 +58,30 @@ Session: `INPUT[text(placeholder(Session Recap)):currentSession]`
 > > [!info|no-t] **⚔️ My Stats**
 > >
 > > ```dataviewjs
-> > const s = dv.page("z_Databases/Vault Hub/Player Settings");
-> > const all = dv.pages('"My Character"');
-> > const name = s?.characterName || (all.length === 1 ? all[0].file.name : "");
+> > const S = dv.page("z_Databases/Vault Hub/Player Settings") ?? {};
+> > const mode = S.vaultMode ?? null;
+> > const arr = v => v == null ? [] : (typeof v === "object" && !v.path && Array.isArray(v.values)) ? v.values : Array.isArray(v) ? v : [v];
+> > const nm = x => String(x?.path ? x.path.split("/").pop().replace(/\.md$/, "") : x ?? "").replace(/^\[\[|\]\]$/g, "").split("|")[0].split("/").pop().trim();
+> > const chars = dv.pages('"My Character"');
+> > const activeChar = S.characterName || (chars.length === 1 ? chars[0].file.name : "");
+> > const activeCamp = S.campaignName || "";
+> > const isLib = p => !!p.import_source;
+> > const hasTag = (p, t) => arr(p.tags).includes(t);
+> > const mine = (p, kind) => {
+> >   if (mode !== "multi") return true;
+> >   const have = kind === "campaign" ? arr(p.campaign).map(x => String(x).trim()).filter(Boolean) : arr(p.character ?? p.owner).map(nm).filter(Boolean);
+> >   const want = kind === "campaign" ? activeCamp : activeChar;
+> >   return have.length === 0 || !want || have.includes(want);
+> > };
+> > const name = activeChar;
 > > if (!name) {
-> >   dv.paragraph("_No character selected — use **Change Character** above._");
+> >   dv.paragraph(mode === "multi" ? "_No character selected — use **Change Character** above._" : "_No character yet — use **New Character** or **Import Character from D&D Beyond**._");
 > > } else {
-> >   const chars = dv.pages('"My Character"').where(c => c.file.name === name);
-> >   if (chars.length === 0) {
+> >   const chars2 = chars.where(c => c.file.name === name);
+> >   if (chars2.length === 0) {
 > >     dv.paragraph(`_No character found: "${name}"_`);
 > >   } else {
-> >     const c = chars[0];
+> >     const c = chars2[0];
 > >     dv.table(
 > >       ["Stat", "Value"],
 > >       [
@@ -107,18 +139,46 @@ Session: `INPUT[text(placeholder(Session Recap)):currentSession]`
 >
 > > [!note|no-t] **Prepared Spells**
 > >
-> > ```dataview
-> > LIST FROM "Possessions/Spells"
-> > WHERE prepared = true
-> > SORT spellLevel ASC
+> > ```dataviewjs
+> > const S = dv.page("z_Databases/Vault Hub/Player Settings") ?? {};
+> > const mode = S.vaultMode ?? null;
+> > const arr = v => v == null ? [] : (typeof v === "object" && !v.path && Array.isArray(v.values)) ? v.values : Array.isArray(v) ? v : [v];
+> > const nm = x => String(x?.path ? x.path.split("/").pop().replace(/\.md$/, "") : x ?? "").replace(/^\[\[|\]\]$/g, "").split("|")[0].split("/").pop().trim();
+> > const chars = dv.pages('"My Character"');
+> > const activeChar = S.characterName || (chars.length === 1 ? chars[0].file.name : "");
+> > const activeCamp = S.campaignName || "";
+> > const isLib = p => !!p.import_source;
+> > const hasTag = (p, t) => arr(p.tags).includes(t);
+> > const mine = (p, kind) => {
+> >   if (mode !== "multi") return true;
+> >   const have = kind === "campaign" ? arr(p.campaign).map(x => String(x).trim()).filter(Boolean) : arr(p.character ?? p.owner).map(nm).filter(Boolean);
+> >   const want = kind === "campaign" ? activeCamp : activeChar;
+> >   return have.length === 0 || !want || have.includes(want);
+> > };
+> > const rows = dv.pages('"Possessions/Spells"').where(p => !isLib(p) && p.prepared === true && mine(p, "character")).sort(p => p.spellLevel);
+> > if (rows.length) dv.list(rows.map(p => p.file.link)); else dv.paragraph("_None prepared._");
 > > ```
 >
 > > [!note|no-t] **Cantrips**
 > >
-> > ```dataview
-> > LIST FROM "Possessions/Spells"
-> > WHERE spellLevel = 0
-> > SORT file.name ASC
+> > ```dataviewjs
+> > const S = dv.page("z_Databases/Vault Hub/Player Settings") ?? {};
+> > const mode = S.vaultMode ?? null;
+> > const arr = v => v == null ? [] : (typeof v === "object" && !v.path && Array.isArray(v.values)) ? v.values : Array.isArray(v) ? v : [v];
+> > const nm = x => String(x?.path ? x.path.split("/").pop().replace(/\.md$/, "") : x ?? "").replace(/^\[\[|\]\]$/g, "").split("|")[0].split("/").pop().trim();
+> > const chars = dv.pages('"My Character"');
+> > const activeChar = S.characterName || (chars.length === 1 ? chars[0].file.name : "");
+> > const activeCamp = S.campaignName || "";
+> > const isLib = p => !!p.import_source;
+> > const hasTag = (p, t) => arr(p.tags).includes(t);
+> > const mine = (p, kind) => {
+> >   if (mode !== "multi") return true;
+> >   const have = kind === "campaign" ? arr(p.campaign).map(x => String(x).trim()).filter(Boolean) : arr(p.character ?? p.owner).map(nm).filter(Boolean);
+> >   const want = kind === "campaign" ? activeCamp : activeChar;
+> >   return have.length === 0 || !want || have.includes(want);
+> > };
+> > const rows = dv.pages('"Possessions/Spells"').where(p => !isLib(p) && p.spellLevel === 0 && mine(p, "character")).sort(p => p.file.name);
+> > if (rows.length) dv.list(rows.map(p => p.file.link)); else dv.paragraph("_No cantrips yet._");
 > > ```
 
 ---

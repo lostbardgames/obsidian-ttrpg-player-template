@@ -24,10 +24,22 @@ function getCharacterFiles(app) {
   return app.vault.getMarkdownFiles().filter(f => f.path.startsWith("My Character/"));
 }
 
+async function getMode(app) {
+  try {
+    const m = (await app.vault.adapter.read(SETTINGS_PATH)).match(/^vaultMode:\s*['"]?(single|multi)['"]?\s*$/m);
+    return m ? m[1] : null;
+  } catch (_) { return null; }
+}
+
 // ── Main ───────────────────────────────────────────────────────────────────
 
 module.exports = async (params) => {
   const { app, quickAddApi: qa } = params;
+
+  if ((await getMode(app)) !== "multi") {
+    new Notice("Switching characters is for multiple-character vaults. Your vault has a single character.", 7000);
+    return;
+  }
 
   const chars = getCharacterFiles(app);
   if (chars.length === 0) {

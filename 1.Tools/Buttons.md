@@ -111,6 +111,46 @@
 
 ## 🗄️ Vault
 
+```dataviewjs
+const S = dv.page("z_Databases/Vault Hub/Player Settings") ?? {};
+const mode = S.vaultMode ?? null;
+const arr = v => v == null ? [] : (typeof v === "object" && !v.path && Array.isArray(v.values)) ? v.values : Array.isArray(v) ? v : [v];
+const nm = x => String(x?.path ? x.path.split("/").pop().replace(/\.md$/, "") : x ?? "").replace(/^\[\[|\]\]$/g, "").split("|")[0].split("/").pop().trim();
+const chars = dv.pages('"My Character"');
+const activeChar = S.characterName || (chars.length === 1 ? chars[0].file.name : "");
+const activeCamp = S.campaignName || "";
+const isLib = p => !!p.import_source;
+const hasTag = (p, t) => arr(p.tags).includes(t);
+const mine = (p, kind) => {
+  if (mode !== "multi") return true;
+  const have = kind === "campaign" ? arr(p.campaign).map(x => String(x).trim()).filter(Boolean) : arr(p.character ?? p.owner).map(nm).filter(Boolean);
+  const want = kind === "campaign" ? activeCamp : activeChar;
+  return have.length === 0 || !want || have.includes(want);
+};
+const run = n => app.commands.executeCommandById(`quickadd:choice:p1b2c3d4-0001-4000-8000-0000000000${n}`);
+const btn = (label, n) => { const b = dv.container.createEl("button", { text: label, cls: "mb-button-inner mod-cta" }); b.style.marginRight = "8px"; b.onclick = () => run(n); };
+const unassigned = () => {
+  let n = 0;
+  for (const d of ["Session Recaps", "Quests", "NPCs Known", "Locations"]) n += dv.pages(`"Campaign Notes/${d}"`).where(p => !arr(p.campaign).some(x => String(x).trim())).length;
+  n += dv.pages('"Campaign Notes/Journal"').where(p => !arr(p.character).map(nm).some(Boolean)).length;
+  n += dv.pages('"Possessions/Items"').where(p => !isLib(p) && !arr(p.owner).map(nm).some(Boolean)).length;
+  n += dv.pages('"Possessions/Spells"').where(p => !isLib(p) && !arr(p.character).map(nm).some(Boolean)).length;
+  return n;
+};
+if (!mode) {
+  dv.paragraph("**Vault type:** not chosen yet.");
+  btn("Choose vault type", 16);
+} else if (mode === "single") {
+  dv.paragraph("**Vault type:** one character, one campaign.");
+  btn("Convert to multiple characters", 16);
+  dv.paragraph("_One-way: a vault can't be converted back to single-character. Nothing is deleted._");
+} else {
+  dv.paragraph("**Vault type:** several characters or campaigns. _This can't be switched back to single-character._");
+  const n = unassigned();
+  if (n > 0) { dv.paragraph(`⚠️ ${n} note(s) aren't assigned to a character or campaign yet.`); btn("Assign unfiled notes", 17); }
+}
+```
+
 > [!column|3 no-t]
 >
 > > [!success|no-t] **Import Data**
@@ -154,4 +194,4 @@
 > >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000010
 > > ```
 > >
-> > Permanently deletes all campaign data (character, journal, session recaps, quests, NPCs, locations, possessions). ⚠️ Files are permanently deleted and cannot be recovered.
+> > Permanently deletes campaign data (characters, journal, session recaps, quests, NPCs, locations, possessions). In multiple-character mode you can reset just one character or one campaign instead. Your vault type is never reset. ⚠️ Files are permanently deleted and cannot be recovered.

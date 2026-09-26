@@ -109,7 +109,19 @@ The vault includes a one-click importer that downloads reference notes from 5e.t
 
 ---
 
-## Step 6 — Create Your Character
+## Step 6 — Choose Your Vault Type
+
+The first time you open the Homepage, a welcome card asks how you'll use this vault (you'll also be asked the first time you create a character):
+
+- **One character, one campaign** — the simplest setup. Everything in the vault is yours; there are no pickers to manage.
+- **Several characters or campaigns** — each character and campaign keeps its own notes. The Homepage shows only the active ones, and you switch with the **Change Character** / **Change Campaign** buttons.
+
+> [!info] You can grow, but not shrink
+> A single-character vault can be converted to multiple characters at any time from **1.Tools/Buttons.md → Vault → Convert to multiple characters** (nothing is deleted, and your existing notes are assigned to your current character and campaign). It can't be converted back.
+
+---
+
+## Step 7 — Create Your Character
 
 Choose one:
 
@@ -124,7 +136,7 @@ Choose one:
 **Option B — Create manually**
 1. Open **1.Tools/Homepage.md**
 2. Click **New Character** in the Quick Create panel — your character sheet will open automatically and becomes your active character
-3. Use **Change Campaign** to set the campaign name shown on the Homepage
+3. Set the campaign name with the button under the Homepage title (**Rename campaign** in a single-character vault, **Change Campaign** in a multi-character one)
 4. Fill in your character details and start using the vault!
 
 > [!tip] Requires Python 3

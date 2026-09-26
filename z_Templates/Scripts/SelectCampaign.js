@@ -24,10 +24,29 @@ function getCharacterFiles(app) {
   return app.vault.getMarkdownFiles().filter(f => f.path.startsWith("My Character/"));
 }
 
+async function getMode(app) {
+  try {
+    const m = (await app.vault.adapter.read(SETTINGS_PATH)).match(/^vaultMode:\s*['"]?(single|multi)['"]?\s*$/m);
+    return m ? m[1] : null;
+  } catch (_) { return null; }
+}
+
 // ── Main ───────────────────────────────────────────────────────────────────
 
 module.exports = async (params) => {
   const { app, quickAddApi: qa } = params;
+
+  // Single-character vault: there is just one campaign — this simply renames it
+  if ((await getMode(app)) !== "multi") {
+    const current = getSettings(app).campaignName || "";
+    const name = ((await qa.inputPrompt("Campaign name", "Campaign name", current)) || "").trim();
+    if (!name) return;
+    await setActive(app, { campaignName: name });
+    const sole = getCharacterFiles(app);
+    if (sole.length === 1) await app.fileManager.processFrontMatter(sole[0], fm => { fm.campaign = name; });
+    new Notice(`📖 Campaign: ${name}`, 5000);
+    return;
+  }
 
   const known = new Set();
   for (const f of getCharacterFiles(app)) {
