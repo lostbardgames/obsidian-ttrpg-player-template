@@ -56,6 +56,10 @@ Your player dashboard. Opens automatically when you launch Obsidian. In a multip
 
 Your live session tool. Keep it open during play for your HP and stats, spell slot tracking, dice rolls, initiative, and quick rules references. Think of it as your digital character tracker for the table.
 
+**Spell slots.** The Spell Slots panel works out your **total** slots from your class and level (multiclass characters and Warlock Pact Magic included) and tracks how many you've **used**. Click a filled slot (●) to spend it; click a spent slot (○) to get it back. **Long Rest** restores everything, and Warlocks also get a **Short Rest** button for Pact Magic. Your usage is saved on the character sheet, so it's still there next session. Characters imported from D&D Beyond carry their class levels automatically; for a hand-made multiclass character add a `classLevels` list property to the sheet, for example `Cleric 3` and `Wizard 2`. Half-casters and Eldritch Knights / Arcane Tricksters follow the rules of the edition you pick below.
+
+**Quick Rules Reference.** Choose **5e (2014)** or **5.5e (2024)** at the top of the section — your choice is remembered. The 2024 edition also shows a **Weapon Mastery** quick reference: all eight mastery properties, which weapons have each, and an A–Z weapon lookup. The reference notes live in `z_Templates/Reference/` if you want to open one full-size.
+
 ### Buttons — `1.Tools/Buttons`
 
 Every note type has a creation button here. When you need to create something that isn't on the Homepage Quick Create panel, come here.

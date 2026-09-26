@@ -521,7 +521,7 @@ BACKSTORY_PLACEHOLDER = "Write your character's backstory here"
 FM_MANAGED = ["species", "class", "subclass", "background", "languages", "level",
               "experience", "experience_next", "proficiencyBonus", "passivePerception",
               "passiveInsight", "passiveInvestigation", "str", "dex", "con", "int", "wis",
-              "cha", "hp_max", "ac", "speed", "hitDie", "isSpellcaster",
+              "cha", "hp_max", "ac", "speed", "hitDie", "classLevels", "isSpellcaster",
               "spellcastingAbility", "spell_save_dc", "spell_attack_bonus", "ddbId"]
 # Only overwritten when D&D Beyond actually has a value (players often fill these in by hand)
 FM_IF_PRESENT = ["alignment", "gender", "age"]
@@ -533,7 +533,7 @@ SECTIONS_IF_PLACEHOLDER = {"Personality Traits", "Ideals", "Flaws", "Bonds"}
 
 _FM_LABELS = {"level": "Level", "experience": "XP", "experience_next": "XP to next level",
               "proficiencyBonus": "Proficiency bonus", "hp_max": "Max HP", "ac": "AC",
-              "speed": "Speed", "hitDie": "Hit die", "spell_save_dc": "Spell save DC",
+              "speed": "Speed", "hitDie": "Hit die", "classLevels": "Class levels", "spell_save_dc": "Spell save DC",
               "spell_attack_bonus": "Spell attack bonus", "passivePerception": "Passive Perception",
               "passiveInsight": "Passive Insight", "passiveInvestigation": "Passive Investigation",
               "str": "STR", "dex": "DEX", "con": "CON", "int": "INT", "wis": "WIS", "cha": "CHA",
@@ -651,8 +651,10 @@ def _merge_frontmatter(old_fm, new_fm, update_art, url_explicit):
         elif repl != lines and key == "hp_current":
             changes.append(f"Current HP: {_fm_scalar(lines)} → {hp_cur}")
         out.extend(repl)
-    for key in ("ddbId", "ddbUrl", "ddbLastSync"):            # notes imported before linking existed
-        if key not in seen and key in new: out.extend(new[key])
+    for key in ("ddbId", "ddbUrl", "ddbLastSync", "classLevels"):   # fields older notes were imported without
+        if key not in seen and key in new:
+            out.extend(new[key])
+            if key == "classLevels": changes.append("Class levels added")
     return "\n".join(out), changes
 
 
@@ -1159,6 +1161,7 @@ def main():
     lang_block  = f"languages:\n{lang_yaml}" if languages else "languages: []"
     skills_table = ("| Skill | Proficient | Expertise |\n| ----- | :-------: | :-------: |\n"
                     + "\n".join(skill_rows))
+    class_levels_yaml = "".join("\n  - '" + part.replace("'", "''") + "'" for part in class_parts) or " []"
     multiclass_callout = f'\n> [!info] Multiclass\n> {multiclass_line}\n' if multiclass_line else ""
 
     folder   = "My Character"
@@ -1209,6 +1212,7 @@ hp_temp: {hp_temp}
 ac: {ac}
 speed: {speed}
 hitDie: '{hit_die}'
+classLevels:{class_levels_yaml}
 isSpellcaster: {str(is_spellcaster).lower()}
 spellcastingAbility: '{spell_ability_key.upper() if spell_ability_key else ""}'
 spell_save_dc: {spell_save_dc}
