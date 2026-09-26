@@ -14,7 +14,7 @@ cssclasses:
 > >
 > > ```meta-bind-button
 > > label: "Change Campaign"
-> > style: default
+> > style: primary
 > > actions:
 > >   - type: command
 > >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000014
@@ -24,7 +24,7 @@ cssclasses:
 > >
 > > ```meta-bind-button
 > > label: "Change Character"
-> > style: default
+> > style: primary
 > > actions:
 > >   - type: command
 > >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000015

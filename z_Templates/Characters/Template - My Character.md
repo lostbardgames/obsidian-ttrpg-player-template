@@ -187,6 +187,8 @@ spell_attack_bonus: 0
 
 ## Backstory
 
+> *<font color="#646a73">Write your character's backstory here — where they come from, what shaped them, and how they became an adventurer. Replace this text.</font>*
+
 ### Birth
 
 - **Birthday:** `VIEW[{birthday}][text]`

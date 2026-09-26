@@ -515,6 +515,8 @@ def download_image(url, dest_path):
 # (personality, goals, backstory, notes, session history, location, conditions…)
 # is left alone.
 
+BACKSTORY_PLACEHOLDER = "Write your character's backstory here"
+
 # Frontmatter keys D&D Beyond always owns
 FM_MANAGED = ["species", "class", "subclass", "background", "languages", "level",
               "experience", "experience_next", "proficiencyBonus", "passivePerception",
@@ -582,6 +584,12 @@ def _split_sections(body):
 
 def _join_body(pre, secs):
     return "\n".join([pre] + [t for _, t in secs])
+
+
+def _split_intro(text):
+    """Split a section into (heading + free-form intro, first ### subsection onward)."""
+    i = text.find("\n### ")
+    return (text, "") if i < 0 else (text[:i + 1], text[i + 1:])
 
 
 def _table_cells(row):
@@ -664,8 +672,23 @@ def _merge_body(old_body, new_body):
         opre = re.sub(r"(?m)^(# [^\n]*\n)", lambda m: m.group(1) + n.group(0), opre, count=1)
         changes.append("Multiclass updated")
 
+    # Notes imported before the free-form backstory existed call this section "Past".
+    # Rename it and add the free-form area above the player's existing sub-sections.
+    if "Backstory" in ndict and "Backstory" not in [h for h, _ in osecs]:
+        for i, (h, text) in enumerate(osecs):
+            if h == "Past":
+                osecs[i] = ("Backstory", _split_intro(ndict["Backstory"])[0] + _split_intro(text)[1])
+                changes.append("Backstory section added")
+                break
+
     for h, text in osecs:
-        if h in SECTIONS_MANAGED and h in ndict:
+        if h == "Backstory" and h in ndict:
+            o_intro, o_rest = _split_intro(text)
+            n_intro = _split_intro(ndict[h])[0]
+            if BACKSTORY_PLACEHOLDER in o_intro and BACKSTORY_PLACEHOLDER not in n_intro:
+                text = n_intro + o_rest
+                changes.append("Backstory filled from D&D Beyond")
+        elif h in SECTIONS_MANAGED and h in ndict:
             nt = _keep_inventory_notes(text, ndict[h]) if h == "Equipment & Inventory" else ndict[h]
             if nt != text: changes.append(f"{_SECTION_LABELS[h]} updated")
             text = nt
@@ -1051,6 +1074,13 @@ def main():
     bonds       = (traits.get("bonds") or "").strip()
     flaws       = (traits.get("flaws") or "").strip()
 
+    # Free-form backstory: D&D Beyond's own field when set, otherwise a placeholder to write over.
+    # Lines starting with '#' are escaped so they can't be mistaken for note headings on update.
+    backstory = ((data.get("notes") or {}).get("backstory") or "").strip()
+    backstory = re.sub(r"(?m)^(#{1,6} )", lambda m: "\\" + m.group(1), backstory)
+    backstory_text = backstory or (f'> *<font color="#646a73">{BACKSTORY_PLACEHOLDER} — where they come from, '
+                                   f'what shaped them, and how they became an adventurer. Replace this text.</font>*')
+
     _ph = "#646a73"
     personality_text = personality or f'> *<font color="{_ph}">Insert Personality Traits.</font>*'
     ideals_text      = ideals      or f'> *<font color="{_ph}">Insert Ideals.</font>*'
@@ -1291,7 +1321,9 @@ ddbLastSync: {datetime.now().strftime('%Y-%m-%d')}
 > > [!metadata|longterm] Long Term
 > > - *<font color="#646a73">What does this character want to accomplish in the next 5-10 years?</font>*
 
-## Past
+## Backstory
+
+{backstory_text}
 
 ### Birth
 
@@ -1303,11 +1335,11 @@ ddbLastSync: {datetime.now().strftime('%Y-%m-%d')}
 
 > *<font color="#646a73">What was this character's childhood like?</font>*
 
-### Journey
+### Journey to Adventure
 
 > *<font color="#646a73">What brought this character to where they are now?</font>*
 
-### Worship
+### Worship & Faith
 
 > *<font color="#646a73">Is there any deity or group this character holds loyalty to?</font>*
 

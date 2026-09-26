@@ -95,7 +95,7 @@ Every note type has a creation button here. When you need to create something th
 - **Equipment & Inventory** — items carried (link to Item notes for tracked items)
 - **Personality** — traits, ideals, flaws, bonds
 - **Goals** — short-term and long-term character goals
-- **Backstory** — birth, childhood, and the journey to adventuring
+- **Backstory** — a free-form area to write out your character's story for reference, followed by optional prompts for birth, childhood, the journey to adventuring, and faith. Imported characters get their D&D Beyond backstory here if one is set
 - **Session History** — auto-populated list of session recaps
 
 > [!tip] HP During Play
@@ -387,7 +387,7 @@ The importer remembers your D&D Beyond link on the character note (the `ddbId`, 
 
 **Refreshed from D&D Beyond:** level, XP, ability scores, max HP, AC, speed, passive scores, spell save DC/attack, species/class/subclass/background, languages, skills, proficiencies, spells, features, feats, and inventory. Your per-item **Notes** column in the inventory table is kept. Alignment, gender and age update only if D&D Beyond has a value.
 
-**Never touched:** current HP (if your HP was at full it follows a new max HP; otherwise it's kept), temp HP, conditions, location, campaign, organizations, religions, goals, secrets, backstory, session history, and anything you wrote in Notes. Personality, Ideals, Flaws and Bonds are filled from D&D Beyond only while they're still the empty placeholder.
+**Never touched:** current HP (if your HP was at full it follows a new max HP; otherwise it's kept), temp HP, conditions, location, campaign, organizations, religions, goals, secrets, backstory, session history, and anything you wrote in Notes. Personality, Ideals, Flaws, Bonds and the free-form Backstory are filled from D&D Beyond only while they're still the empty placeholder. (Older imported notes with a "Past" section are upgraded to "Backstory"; your sub-sections stay as they are.)
 
 The update shows a short summary of what changed (e.g. "Level: 5 → 6"), then reloads the vault. Characters imported with an earlier version of the template are recognized automatically.
 
