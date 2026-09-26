@@ -330,12 +330,13 @@ def _resolve_item_name(raw: str) -> str:
     return raw
 
 
-def _item_link(raw_name: str, items_dir: str) -> str:
-    """Return a wiki link if the vault has a note for this item; otherwise plain text."""
+def _item_link(raw_name: str, vault_path: str) -> str:
+    """Return a path-qualified wiki link (table-safe) if the vault has a note for this
+    item; otherwise plain text."""
     resolved = _resolve_item_name(raw_name)
-    note_path = os.path.join(items_dir, f"{resolved}.md")
-    if os.path.exists(note_path):
-        return f"[[{resolved}]]"
+    safe = _sanitize_link(resolved)
+    if os.path.exists(os.path.join(vault_path, "Possessions", "Items", f"{safe}.md")):
+        return f"[[Possessions/Items/{safe}\\|{resolved}]]"
     return resolved
 
 
@@ -438,15 +439,61 @@ def get_stat(lst, sid):
         if s.get("id") == sid: return s.get("value") or 0
     return 0
 
-def calc_score(base, bonus, override, sid):
-    ov = get_stat(override, sid)
-    return ov if ov else (get_stat(base, sid) or 0) + (get_stat(bonus, sid) or 0)
+ABILITY_FULL = {"str": "strength", "dex": "dexterity", "con": "constitution",
+                "int": "intelligence", "wis": "wisdom", "cha": "charisma"}
+
+def _mod_value(m):
+    return m.get("value") or m.get("fixedValue") or 0
 
 def all_modifiers(data):
+    """Modifiers that currently apply. Item modifiers only count while the item is
+    equipped (and attuned, if it requires attunement)."""
+    inv = {}
+    for it in data.get("inventory") or []:
+        inv[(it.get("definition") or {}).get("id")] = it
     result = []
-    for grp in (data.get("modifiers") or {}).values():
-        if isinstance(grp, list): result.extend(grp)
+    for grp, lst in (data.get("modifiers") or {}).items():
+        if not isinstance(lst, list): continue
+        for m in lst:
+            if grp == "item":
+                it = inv.get(m.get("componentId"))
+                if not it or not it.get("equipped"): continue
+                if (it.get("definition") or {}).get("canAttune") and not it.get("isAttuned"): continue
+            result.append(m)
     return result
+
+def calc_score(base, bonus, override, sid, mods=(), key=""):
+    """Final ability score: override, else base + manual bonus + feat/race/item bonuses,
+    raised to any 'set' modifier (e.g. Belt of Giant Strength)."""
+    ov = get_stat(override, sid)
+    if ov: return ov
+    sub = f"{ABILITY_FULL.get(key, '')}-score"
+    total = (get_stat(base, sid) or 0) + (get_stat(bonus, sid) or 0)
+    total += sum(_mod_value(m) for m in mods if m.get("type") == "bonus" and m.get("subType") == sub)
+    for m in mods:
+        if m.get("type") == "set" and m.get("subType") == sub:
+            total = max(total, _mod_value(m))
+    return total
+
+_SOURCE_TAG_RE = re.compile(r"\s*\([A-Z][A-Za-z0-9]{1,7}\)$")
+
+def _clean_subclass_name(name: str) -> str:
+    """'Tempest Domain (PHB)' -> 'Tempest Domain' (vault notes are '<Sub> (<Class>)')."""
+    return _SOURCE_TAG_RE.sub("", name).strip()
+
+_BOOKKEEPING_FEAT_RE = re.compile(r"^Increase (one|two|three) |.+ Ability Score Improvements$", re.I)
+
+def _note_link(name: str, rel_dirs, vault_path: str, display: str = "", in_table: bool = False) -> str:
+    """Path-qualified wikilink when a matching note exists (several vault notes share
+    basenames across Spells/Items/Feats/Traits, so bare [[Name]] links can resolve wrongly).
+    Falls back to a bare link so unresolved names stay visible."""
+    safe = _sanitize_link(name)
+    display = display or name
+    bar = "\\|" if in_table else "|"
+    for rel in rel_dirs:
+        if os.path.exists(os.path.join(vault_path, *rel.split("/"), f"{safe}.md")):
+            return f"[[{rel}/{safe}{bar}{display}]]"
+    return f"[[{safe}{bar}{display}]]" if safe != display else f"[[{safe}]]"
 
 def fetch(char_id):
     req = urllib.request.Request(API_URL.format(id=char_id))
@@ -491,6 +538,11 @@ def main():
         print(json.dumps({"error": "No character data in response"}))
         sys.exit(1)
 
+    # Default the campaign to the one this character belongs to on D&D Beyond
+    if not campaign_name:
+        campaign_name = (data.get("campaign") or {}).get("name") or ""
+    campaign_name = campaign_name.replace("'", "''")  # escape for single-quoted YAML
+
     # ── Basic info ─────────────────────────────────────────────────────────
     char_name     = data.get("name", "Unknown Character")
     race_obj      = data.get("race") or {}
@@ -533,17 +585,28 @@ def main():
     base_stats     = data.get("stats") or []
     bonus_stats    = data.get("bonusStats") or []
     override_stats = data.get("overrideStats") or []
-    scores = {name: calc_score(base_stats, bonus_stats, override_stats, sid)
+    all_mods = all_modifiers(data)
+    scores = {name: calc_score(base_stats, bonus_stats, override_stats, sid, all_mods, name)
               for sid, name in STAT_IDS.items()}
     pb = prof_bonus(total_level)
 
     # ── HP & XP ────────────────────────────────────────────────────────────
-    hp_info    = data.get("hitPointInfo") or {}
-    hp_max     = (hp_info.get("totalHitPoints")
-                  or data.get("baseHitPoints")
-                  or 0)
-    removed    = hp_info.get("removedHitPoints") or 0
-    hp_temp    = hp_info.get("temporaryHitPoints") or 0
+    # DDB's baseHitPoints excludes CON and feat bonuses:
+    #   max = base + CON mod × level + bonus + (per-level bonuses, e.g. Tough) × level
+    hp_info = data.get("hitPointInfo") or {}
+    if hp_info.get("totalHitPoints"):
+        hp_max = hp_info["totalHitPoints"]
+    elif data.get("overrideHitPoints"):
+        hp_max = data["overrideHitPoints"]
+    else:
+        per_level = sum(_mod_value(m) for m in all_mods
+                        if m.get("type") == "bonus" and m.get("subType") == "hit-points-per-level")
+        hp_max = ((data.get("baseHitPoints") or 0)
+                  + mod(scores["con"]) * total_level
+                  + (data.get("bonusHitPoints") or 0)
+                  + per_level * total_level)
+    removed    = hp_info.get("removedHitPoints") or data.get("removedHitPoints") or 0
+    hp_temp    = hp_info.get("temporaryHitPoints") or data.get("temporaryHitPoints") or 0
     hp_current = max(0, hp_max - removed)
     xp         = data.get("currentXp") or 0
     xp_next    = XP_THRESHOLDS[total_level] if total_level < 20 else XP_THRESHOLDS[19]
@@ -560,10 +623,15 @@ def main():
         if not item.get("equipped"): continue
         defn = item.get("definition") or {}
         if defn.get("filterType") != "Armor": continue
-        if defn.get("type") == "Shield":
-            shield_bonus = 2
+        # Shields have an empty `type` in the API — armorTypeId 4 is the reliable marker
+        if defn.get("armorTypeId") == 4 or defn.get("baseArmorName") == "Shield" or defn.get("type") == "Shield":
+            shield_bonus = max(shield_bonus, defn.get("armorClass") or 2)
         else:
             equipped_armor = {"base": defn.get("armorClass") or 0, "type_id": defn.get("armorTypeId")}
+
+    ac_bonus = sum(_mod_value(m) for m in all_mods
+                   if m.get("type") == "bonus" and m.get("subType") == "armor-class"
+                   and (equipped_armor or "armor" not in (m.get("restriction") or "").lower()))
 
     dex_mod = mod(scores["dex"])
     if equipped_armor:
@@ -573,9 +641,9 @@ def main():
         else:        ac = equipped_armor["base"] + dex_mod + shield_bonus
     else:
         ac = 10 + dex_mod + shield_bonus
+    ac += ac_bonus
 
     # ── Modifiers ──────────────────────────────────────────────────────────
-    all_mods = all_modifiers(data)
 
     def has_prof(subtype):
         return any(m.get("type") == "proficiency" and m.get("subType") == subtype for m in all_mods)
@@ -639,26 +707,25 @@ def main():
 
     # ── Feats ──────────────────────────────────────────────────────────────
     # DDB sometimes leaks ability score names as "feats" from ASI choices — skip them
+    # Also skip ASI bookkeeping entries DDB stores as feats/options
+    # ("Farmer Ability Score Improvements", "Increase two scores (+2 / +1)").
     FEAT_SKIP = {"Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"}
     feat_names = []
     # Primary source: data.feats
     for f in (data.get("feats") or []):
         name = (f.get("definition") or {}).get("name", "")
-        if name and name not in feat_names and name not in FEAT_SKIP:
+        if name and name not in feat_names and name not in FEAT_SKIP and not _BOOKKEEPING_FEAT_RE.search(name):
             feat_names.append(name)
     # Secondary source: data.options.feat (feats taken via ASI choices)
     for f in ((data.get("options") or {}).get("feat") or []):
         name = (f.get("definition") or {}).get("name", "")
-        if name and name not in feat_names and name not in FEAT_SKIP:
+        if name and name not in feat_names and name not in FEAT_SKIP and not _BOOKKEEPING_FEAT_RE.search(name):
             feat_names.append(name)
 
     def feat_link(name):
         # DDB appends class choices like "(Bard, Sorcerer, Warlock)"; strip for note resolution
         base = re.sub(r'\s*\([^)]*\)$', '', name).strip()
-        safe = _sanitize_link(base)
-        if safe != name:
-            return f"[[{safe}|{name}]]"
-        return f"[[{safe}]]"
+        return _note_link(base, ["Lore/Feats"], vault_path, display=name)
 
     feats_block = ("\n".join(f"- {feat_link(n)}" for n in feat_names)
                    if feat_names else "> *No feats found — add manually if this character has feats.*")
@@ -682,7 +749,9 @@ def main():
             f_name  = f.get("name") or (f.get("definition") or {}).get("name", "")
             f_name  = f_name.replace("’", "'").replace("‘", "'") if f_name else f_name
             f_level = f.get("requiredLevel") or f.get("level") or 0
-            if f_name and f_level <= cls_level and f_name not in seen_feature_names and f_name not in DDB_SYNTHETIC:
+            # 2024 classes carry a "Core <Class> Traits" table entry that has no note
+            if (f_name and f_level <= cls_level and f_name not in seen_feature_names
+                    and f_name not in DDB_SYNTHETIC and not re.match(r"^Core .+ Traits$", f_name)):
                 seen_feature_names.add(f_name)
                 gained.append((f_level, f_name))
 
@@ -693,9 +762,7 @@ def main():
             else:
                 heading = f"**{cls_name}**"
             lines = [
-                f"- [[{_sanitize_link(name)}|{name}]] *(Lv {lvl})*"
-                if _sanitize_link(name) != name
-                else f"- [[{name}]] *(Lv {lvl})*"
+                f"- {_note_link(name, ['Lore/Classes/Features'], vault_path)} *(Lv {lvl})*"
                 for lvl, name in gained
             ]
             feature_sections.append(heading + "\n" + "\n".join(lines))
@@ -712,18 +779,16 @@ def main():
             racial_traits.append(name)
     if racial_traits:
         race_heading = f"**{race_name} Racial Traits**" if race_name else "**Racial Traits**"
-        trait_lines = [
-            f"- [[{_sanitize_link(t)}|{t}]]" if _sanitize_link(t) != t else f"- [[{t}]]"
-            for t in racial_traits
-        ]
+        trait_dirs = ["Lore/Races/Traits", "Lore/Species/Traits"]
+        trait_lines = [f"- {_note_link(t, trait_dirs, vault_path)}" for t in racial_traits]
         feature_sections.append(race_heading + "\n" + "\n".join(trait_lines))
 
-    # Background feature
-    bg_feature = (bg_def.get("featureName") or "").strip().replace("'", "'").replace("'", "'") if bg_def else ""
-    if bg_feature:
+    # Background feature — 2024 backgrounds grant an origin feat (e.g. Tough) that is
+    # already listed under Feats, so only show it here when it isn't.
+    bg_feature = (bg_def.get("featureName") or "").strip().replace("’", "'").replace("‘", "'") if bg_def else ""
+    if bg_feature and bg_feature not in feat_names:
         bg_heading = f"**{bg_name} Background Feature**" if bg_name else "**Background Feature**"
-        bg_feat_safe = _sanitize_link(bg_feature)
-        bg_feat_link = f"[[{bg_feat_safe}|{bg_feature}]]" if bg_feat_safe != bg_feature else f"[[{bg_feature}]]"
+        bg_feat_link = _note_link(bg_feature, ["Lore/Backgrounds/Features", "Lore/Feats"], vault_path)
         feature_sections.append(f"{bg_heading}\n- {bg_feat_link}")
 
     class_features_block = ("\n\n".join(feature_sections)
@@ -753,12 +818,7 @@ def main():
             heading = SPELL_LEVEL_NAMES.get(lvl, f"Level {lvl}")
             spell_lines.append(f"\n### {heading}")
             for s in sorted(spells_by_level[lvl]):
-                # Sanitize names with slashes (e.g. Enlarge/Reduce → Enlarge-Reduce)
-                note_name = s.replace("/", "-")
-                if note_name != s:
-                    spell_lines.append(f"- [[{note_name}|{s}]]")
-                else:
-                    spell_lines.append(f"- [[{s}]]")
+                spell_lines.append(f"- {_note_link(s, ['Possessions/Spells'], vault_path)}")
         spell_section = "\n".join(spell_lines)
     else:
         spell_section = "\n> *No spells found — fill in manually if this character is a spellcaster.*"
@@ -789,8 +849,7 @@ def main():
         key = (name, itype)
         inv_agg[key] = inv_agg.get(key, 0) + qty
 
-    items_dir = os.path.join(vault_path, "Possessions", "Items")
-    inv_rows = [f"| {_item_link(name, items_dir)} | {itype} | {count} | |"
+    inv_rows = [f"| {_item_link(name, vault_path)} | {itype} | {count} | |"
                 for (name, itype), count in inv_agg.items()]
     inv_table = ("| Name | Type | Count | Notes |\n| ---- | ---- | :---: | ----- |\n"
                  + ("\n".join(inv_rows) if inv_rows else "| | | | |"))
@@ -837,9 +896,12 @@ def main():
     def lore_link(val, folder):
         return f"'{_lore_link(val, folder, lore_index)}'" if val else "''"
     def subclass_link(sub, cls):
-        # Vault names subclasses "SubclassName (ClassName).md"
-        note_name = f"{sub} ({cls})"
-        return f"'{_lore_link(note_name, 'subclasses', lore_index, display=sub)}'" if sub else "''"
+        # Vault names subclasses "SubclassName (ClassName).md"; DDB names carry a source
+        # tag ("Tempest Domain (PHB)") that the vault note doesn't, so try both forms.
+        if not sub: return "''"
+        candidates = [f"{sub} ({cls})", f"{_clean_subclass_name(sub)} ({cls})"]
+        note_name = next((n for n in candidates if _lore_exists(n, "subclasses", lore_index)), candidates[-1])
+        return f"'{_lore_link(note_name, 'subclasses', lore_index, display=sub)}'"
 
     # Languages need path-qualified links to avoid colliding with same-named race notes
     lang_yaml   = "\n".join(f"  - '[[Lore/Languages/{l}|{l}]]'" for l in languages) if languages else "  []"

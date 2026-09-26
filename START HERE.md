@@ -155,7 +155,11 @@ Possessions/
 ├── Items/            Your items and equipment
 └── Spells/           Your spells (if applicable)
 Lore/                 World lore and reference notes (5e.tools imports land here)
+z_Uncategoried/       Catch-all for new/unfiled notes (Obsidian's default for new files)
 ```
+
+> [!tip] Unsorted Notes
+> Any note you create without picking a folder — a quick scratch note, or a file dropped into Obsidian — lands in `z_Uncategoried/` automatically. Move it into a proper folder once you know what it is. This folder is personal scratch space: it's never touched by the updater and isn't included when you download the template.
 
 ### 🎨 Icon & Color System
 

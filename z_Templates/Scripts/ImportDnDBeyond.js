@@ -165,7 +165,8 @@ module.exports = async (params) => {
   }
 
   // ── Campaign name (optional, plain text — no party system in this vault) ───
-  const campaignName = (await qa.inputPrompt("Campaign name (optional)", "")) || "";
+  // Blank = use the campaign name set on the D&D Beyond sheet.
+  const campaignName = (await qa.inputPrompt("Campaign name (leave blank to use the D&D Beyond campaign)", "")) || "";
 
   // ── Detect Python ────────────────────────────────────────────────────────
   let python = await detectPython();
