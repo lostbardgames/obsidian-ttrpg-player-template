@@ -53,7 +53,7 @@
 .nav-folder-title[data-path="z_Databases"] .nav-folder-title-content::before { content: "🗄️ "; }
 .nav-folder-title[data-path="z_Excalidraw"] .nav-folder-title-content::before { content: "✏️ "; }
 .nav-folder-title[data-path="z_Templates"] .nav-folder-title-content::before { content: "📋 "; }
-.nav-folder-title[data-path="z_Uncategoried"] .nav-folder-title-content::before { content: "📁 "; }
+.nav-folder-title[data-path="z_Uncategorized"] .nav-folder-title-content::before { content: "📁 "; }
 
 /* ═══════════════════════
    CHARACTERS

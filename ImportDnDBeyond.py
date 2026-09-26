@@ -6,7 +6,7 @@ Writes the character note to My Character/ (this vault has no party system).
 Prints a single JSON object to stdout on completion.
 """
 
-import sys, os, json, re, urllib.request, urllib.error
+import sys, os, json, re, argparse, urllib.request, urllib.error
 from collections import defaultdict
 from datetime import datetime
 
@@ -509,16 +509,236 @@ def download_image(url, dest_path):
         with open(dest_path, "wb") as f:
             f.write(r.read())
 
+# ── Update-in-place merge ──────────────────────────────────────────────────────
+# `--update` re-fetches the character and merges it into the existing note:
+# D&D Beyond-derived fields/sections are refreshed; everything the player wrote
+# (personality, goals, backstory, notes, session history, location, conditions…)
+# is left alone.
+
+# Frontmatter keys D&D Beyond always owns
+FM_MANAGED = ["species", "class", "subclass", "background", "languages", "level",
+              "experience", "experience_next", "proficiencyBonus", "passivePerception",
+              "passiveInsight", "passiveInvestigation", "str", "dex", "con", "int", "wis",
+              "cha", "hp_max", "ac", "speed", "hitDie", "isSpellcaster",
+              "spellcastingAbility", "spell_save_dc", "spell_attack_bonus", "ddbId"]
+# Only overwritten when D&D Beyond actually has a value (players often fill these in by hand)
+FM_IF_PRESENT = ["alignment", "gender", "age"]
+# Body sections D&D Beyond owns (Equipment keeps the player's Notes column)
+SECTIONS_MANAGED = {"Skills & Saving Throws", "Spellcasting",
+                    "Features, Traits & Proficiencies", "Equipment & Inventory"}
+# Body sections refreshed only while still an untouched placeholder
+SECTIONS_IF_PLACEHOLDER = {"Personality Traits", "Ideals", "Flaws", "Bonds"}
+
+_FM_LABELS = {"level": "Level", "experience": "XP", "experience_next": "XP to next level",
+              "proficiencyBonus": "Proficiency bonus", "hp_max": "Max HP", "ac": "AC",
+              "speed": "Speed", "hitDie": "Hit die", "spell_save_dc": "Spell save DC",
+              "spell_attack_bonus": "Spell attack bonus", "passivePerception": "Passive Perception",
+              "passiveInsight": "Passive Insight", "passiveInvestigation": "Passive Investigation",
+              "str": "STR", "dex": "DEX", "con": "CON", "int": "INT", "wis": "WIS", "cha": "CHA",
+              "species": "Species", "class": "Class", "subclass": "Subclass",
+              "background": "Background", "languages": "Languages", "alignment": "Alignment",
+              "gender": "Gender", "age": "Age", "isSpellcaster": "Spellcaster",
+              "spellcastingAbility": "Spellcasting ability"}
+_SECTION_LABELS = {"Skills & Saving Throws": "Skills", "Spellcasting": "Spells",
+                   "Features, Traits & Proficiencies": "Features & proficiencies",
+                   "Equipment & Inventory": "Inventory"}
+
+
+def _split_note(text):
+    m = re.match(r"^---\n(.*?)\n---\n?(.*)$", text, re.S)
+    return (m.group(1), m.group(2)) if m else ("", text)
+
+
+def _fm_blocks(fm):
+    """Ordered [key, [lines]] blocks; list items/continuations stay with their key."""
+    blocks = []
+    for line in fm.split("\n"):
+        m = re.match(r"^([A-Za-z_][\w-]*):", line)
+        if m: blocks.append([m.group(1), [line]])
+        elif blocks: blocks[-1][1].append(line)
+    return blocks
+
+
+def _fm_scalar(lines):
+    v = re.sub(r"^[^:]*:\s*", "", lines[0]).strip()
+    return v.strip("'\"")
+
+
+def _fm_blank(lines):
+    return len(lines) == 1 and _fm_scalar(lines) in ("", "[]")
+
+
+def _split_sections(body):
+    """→ (preamble text, [(heading, text)]) splitting on H2s outside code fences."""
+    pre, secs, cur, fence = [], [], None, False
+    for ln in body.split("\n"):
+        if ln.startswith("```"): fence = not fence
+        if not fence and ln.startswith("## "):
+            cur = [ln]; secs.append((ln[3:].strip(), cur))
+        elif cur is None: pre.append(ln)
+        else: cur.append(ln)
+    return "\n".join(pre), [(h, "\n".join(l)) for h, l in secs]
+
+
+def _join_body(pre, secs):
+    return "\n".join([pre] + [t for _, t in secs])
+
+
+def _table_cells(row):
+    return [c.strip() for c in re.split(r"(?<!\\)\|", row)[1:-1]]
+
+
+def _item_key(cell):
+    m = re.match(r"^\[\[(?:[^\]|\\]*[|\\]+)?([^\]]*)\]\]$", cell)
+    return (m.group(1) if m else cell).strip().lower()
+
+
+def _keep_inventory_notes(old_text, new_text):
+    """Carry the player's per-item Notes column over into the refreshed table."""
+    notes = {}
+    for ln in old_text.split("\n"):
+        if ln.startswith("|") and not re.match(r"^\|\s*(Name\b|-)", ln):
+            cells = _table_cells(ln)
+            if len(cells) >= 4 and cells[3]:
+                notes[_item_key(cells[0])] = cells[3]
+    out = []
+    for ln in new_text.split("\n"):
+        if ln.startswith("|") and not re.match(r"^\|\s*(Name\b|-)", ln):
+            cells = _table_cells(ln)
+            if len(cells) >= 4 and not cells[3] and _item_key(cells[0]) in notes:
+                ln = re.sub(r"\|\s*\|\s*$", f"| {notes[_item_key(cells[0])]} |", ln)
+        out.append(ln)
+    return "\n".join(out)
+
+
+def _merge_frontmatter(old_fm, new_fm, update_art, url_explicit):
+    new = {k: l for k, l in _fm_blocks(new_fm)}
+    changes, out, seen = [], [], set()
+    old_blocks = _fm_blocks(old_fm)
+    old = {k: l for k, l in old_blocks}
+
+    # HP: keep live play state; only follow a change in max HP
+    def as_int(lines):
+        try: return int(_fm_scalar(lines))
+        except (TypeError, ValueError): return None
+    old_cur, old_max = as_int(old.get("hp_current", [""])), as_int(old.get("hp_max", [""]))
+    new_max = as_int(new.get("hp_max", [""]))
+    if None in (old_cur, old_max, new_max): hp_cur = as_int(new.get("hp_current", [""]))
+    elif old_cur >= old_max: hp_cur = new_max
+    else: hp_cur = min(old_cur, new_max)
+
+    for key, lines in old_blocks:
+        seen.add(key)
+        repl = lines
+        if key in FM_MANAGED and key in new: repl = new[key]
+        elif key in FM_IF_PRESENT and key in new and not _fm_blank(new[key]): repl = new[key]
+        elif key == "ddbUrl" and url_explicit and key in new: repl = new[key]
+        elif key == "ddbLastSync" and key in new: repl = new[key]
+        elif key == "hp_current" and hp_cur is not None: repl = [f"hp_current: {hp_cur}"]
+        elif key == "art" and update_art and key in new: repl = new[key]
+        if repl != lines and key in _FM_LABELS:
+            a, b = _fm_scalar(lines), _fm_scalar(repl)
+            changes.append(f"{_FM_LABELS[key]}: {a} → {b}" if len(lines) == len(repl) == 1
+                           else f"{_FM_LABELS[key]} updated")
+        elif repl != lines and key == "hp_current":
+            changes.append(f"Current HP: {_fm_scalar(lines)} → {hp_cur}")
+        out.extend(repl)
+    for key in ("ddbId", "ddbUrl", "ddbLastSync"):            # notes imported before linking existed
+        if key not in seen and key in new: out.extend(new[key])
+    return "\n".join(out), changes
+
+
+def _merge_body(old_body, new_body):
+    opre, osecs = _split_sections(old_body)
+    npre, nsecs = _split_sections(new_body)
+    ndict, changes, out = dict(nsecs), [], []
+
+    # Multiclass callout lives in the preamble
+    cb = re.compile(r"\n> \[!info\] Multiclass\n> [^\n]*\n")
+    o, n = cb.search(opre), cb.search(npre)
+    if o and n and o.group(0) != n.group(0):
+        opre = cb.sub(lambda m: n.group(0), opre, count=1); changes.append("Multiclass updated")
+    elif o and not n:
+        opre = cb.sub("", opre, count=1); changes.append("Multiclass updated")
+    elif n and not o:
+        opre = re.sub(r"(?m)^(# [^\n]*\n)", lambda m: m.group(1) + n.group(0), opre, count=1)
+        changes.append("Multiclass updated")
+
+    for h, text in osecs:
+        if h in SECTIONS_MANAGED and h in ndict:
+            nt = _keep_inventory_notes(text, ndict[h]) if h == "Equipment & Inventory" else ndict[h]
+            if nt != text: changes.append(f"{_SECTION_LABELS[h]} updated")
+            text = nt
+        elif h in SECTIONS_IF_PLACEHOLDER and h in ndict:
+            if re.search(r"Insert [A-Z]", text) and not re.search(r"Insert [A-Z]", ndict[h]):
+                text = ndict[h]; changes.append(f"{h} filled from D&D Beyond")
+        elif h == "Notes" and h in ndict:
+            new_line = re.search(r"(?m)^> Character ID: .*$", ndict[h])
+            old_line = re.search(r"(?m)^> Character ID: .*$", text)
+            if new_line and old_line:
+                line = new_line.group(0)
+                d = re.search(r"Imported: (\d{4}-\d{2}-\d{2})", old_line.group(0))
+                if d: line = re.sub(r"Imported: \d{4}-\d{2}-\d{2}", f"Imported: {d.group(1)}", line)
+                text = text.replace(old_line.group(0), line, 1)
+        out.append((h, text))
+    return _join_body(opre, out), changes
+
+
+def merge_note(old_text, new_text, update_art, url_explicit):
+    ofm, obody = _split_note(old_text)
+    nfm, nbody = _split_note(new_text)
+    fm, fm_changes = _merge_frontmatter(ofm, nfm, update_art, url_explicit)
+    body, body_changes = _merge_body(obody, nbody)
+    return f"---\n{fm}\n---\n{body}", fm_changes + body_changes
+
+
+def find_linked_note(vault_path, char_id):
+    """Locate the note for this D&D Beyond character (ddbId frontmatter, or the
+    'Character ID' callout written by earlier versions of the importer)."""
+    d = os.path.join(vault_path, "My Character")
+    if not os.path.isdir(d): return None
+    for fname in sorted(os.listdir(d)):
+        if not fname.endswith(".md"): continue
+        path = os.path.join(d, fname)
+        try: text = open(path, encoding="utf-8").read()
+        except OSError: continue
+        if (re.search(rf"(?m)^ddbId:\s*['\"]?{re.escape(char_id)}['\"]?\s*$", text)
+                or f"Character ID: `{char_id}`" in text):
+            return path
+    return None
+
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def main():
-    if len(sys.argv) < 4:
-        print(json.dumps({"error": "Usage: ImportDnDBeyond.py <vault_path> <char_id> <campaign_name>"}))
-        sys.exit(1)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("vault_path")
+    ap.add_argument("char_id")
+    ap.add_argument("campaign_name", nargs="?", default="")
+    ap.add_argument("--update", action="store_true",
+                    help="merge into the note already linked to this character instead of creating one")
+    ap.add_argument("--url", default="", help="the D&D Beyond URL to remember on the note")
+    args = ap.parse_args()
 
-    vault_path    = sys.argv[1]
-    char_id       = sys.argv[2].strip()
-    campaign_name = sys.argv[3].strip()
+    vault_path    = args.vault_path
+    char_id       = args.char_id.strip()
+    campaign_name = args.campaign_name.strip()
+    ddb_url       = args.url.strip()
+    update_mode   = args.update
+    existing_path = None
+    if update_mode:
+        existing_path = find_linked_note(vault_path, char_id)
+        if not existing_path:
+            print(json.dumps({"error": "no_linked_note"}))
+            sys.exit(0)
+        if not ddb_url:
+            m = re.search(r"(?m)^ddbUrl:\s*['\"]?([^'\"\n]+)", open(existing_path, encoding="utf-8").read())
+            ddb_url = m.group(1).strip() if m else ""
+    url_explicit = bool(args.url.strip())
+    if not ddb_url or not re.match(r"^https?://", ddb_url):
+        ddb_url = f"https://www.dndbeyond.com/characters/{char_id}"
+        url_explicit = False
+    ddb_url = ddb_url.replace("'", "''")
 
     # ── Fetch ──────────────────────────────────────────────────────────────
     try:
@@ -962,6 +1182,9 @@ isSpellcaster: {str(is_spellcaster).lower()}
 spellcastingAbility: '{spell_ability_key.upper() if spell_ability_key else ""}'
 spell_save_dc: {spell_save_dc}
 spell_attack_bonus: {spell_attack_bonus}
+ddbId: '{char_id}'
+ddbUrl: '{ddb_url}'
+ddbLastSync: {datetime.now().strftime('%Y-%m-%d')}
 ---
 
 > [!infobox | no-blending black]+ <font color="#ffffff">Infobox</font>
@@ -1103,8 +1326,24 @@ SORT sessionNumber DESC
 ## Notes
 
 > [!info] Imported from D&D Beyond
-> Character ID: `{char_id}` · Imported: {datetime.now().strftime('%Y-%m-%d')}
+> Character ID: `{char_id}` · Imported: {datetime.now().strftime('%Y-%m-%d')} · Last synced: {datetime.now().strftime('%Y-%m-%d')} · [Open on D&D Beyond]({ddb_url})
 """
+
+    if update_mode:
+        old_text = open(existing_path, encoding="utf-8").read()
+        # Only replace the portrait with a fresh D&D Beyond one, and never clobber custom art
+        old_art = re.search(r'(?m)^art:\s*(.*)$', old_text)
+        old_is_ours = bool(old_art and ("Placeholder" in old_art.group(1)
+                                        or (avatar_url and os.path.splitext(img_name)[0] in old_art.group(1))))
+        update_art = art_field != "[[PlaceholderCharacter.png]]" and old_is_ours
+        merged, changes = merge_note(old_text, content, update_art, url_explicit)
+        if merged != old_text:
+            with open(existing_path, "w", encoding="utf-8") as fh:
+                fh.write(merged)
+        rel = os.path.relpath(existing_path, vault_path).replace(os.sep, "/")
+        print(json.dumps({"success": True, "updated": True, "file": rel,
+                          "name": char_name, "changes": changes}))
+        return
 
     with open(os.path.join(vault_path, *file_rel.split("/")), "w", encoding="utf-8") as fh:
         fh.write(content)

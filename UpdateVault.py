@@ -37,7 +37,7 @@ PROTECTED = {
     "z_Assets/Character",
     "z_Assets/Unsorted",
     "z_Excalidraw",
-    "z_Uncategoried",
+    "z_Uncategorized",
 }
 
 # Tool files that get a .bak backup before overwriting (user may have customised them)

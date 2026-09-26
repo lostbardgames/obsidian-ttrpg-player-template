@@ -31,8 +31,6 @@
   "enabled_templates_hotkeys": [
     ""
   ],
-  "startup_templates": [
-    "z_Templates/SetupLayout.md"
-  ],
+  "startup_templates": [],
   "intellisense_render": 1
 }

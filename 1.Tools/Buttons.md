@@ -20,6 +20,14 @@
 > >   - type: command
 > >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000012
 > > ```
+> >
+> > ```meta-bind-button
+> > label: "Update Character from D&D Beyond"
+> > style: default
+> > actions:
+> >   - type: command
+> >     command: quickadd:choice:p1b2c3d4-0001-4000-8000-000000000013
+> > ```
 >
 > > [!note|no-t]
 > >

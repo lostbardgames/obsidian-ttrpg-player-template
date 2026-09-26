@@ -11,7 +11,7 @@
 # ── User data & vault backups ─────────────────────────────────────────────────
 .trash/
 .vault-backups/
-z_Uncategoried/
+z_Uncategorized/
 
 # ── Python cache ──────────────────────────────────────────────────────────────
 __pycache__/

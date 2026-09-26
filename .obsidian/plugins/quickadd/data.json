@@ -227,6 +227,25 @@
           }
         ]
       }
+    },
+    {
+      "id": "p1b2c3d4-0001-4000-8000-000000000013",
+      "name": "Update Character from D&D Beyond",
+      "type": "Macro",
+      "command": true,
+      "macro": {
+        "id": "p2c3d4e5-0001-4000-8000-000000000013",
+        "name": "Update Character from D&D Beyond",
+        "commands": [
+          {
+            "id": "p3d4e5f6-0001-4000-8000-000000000013",
+            "name": "UpdateDnDBeyond.js",
+            "type": "UserScript",
+            "path": "z_Templates/Scripts/UpdateDnDBeyond.js",
+            "settings": {}
+          }
+        ]
+      }
     }
   ],
   "inputPrompt": "single-line",

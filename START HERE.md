@@ -119,6 +119,7 @@ Choose one:
 3. Click **"Import Character from D&D Beyond"**
 4. Paste your character's URL or ID, optionally enter a campaign name, and confirm
 5. Your full character sheet is generated automatically — stats, skills, spells, inventory, and features all filled in
+6. The link to your D&D Beyond sheet is remembered on the note — after you level up or change gear, click **"Update Character from D&D Beyond"** to pull in the changes without losing anything you've written
 
 **Option B — Create manually**
 1. Open **1.Tools/Homepage.md**
@@ -155,11 +156,11 @@ Possessions/
 ├── Items/            Your items and equipment
 └── Spells/           Your spells (if applicable)
 Lore/                 World lore and reference notes (5e.tools imports land here)
-z_Uncategoried/       Catch-all for new/unfiled notes (Obsidian's default for new files)
+z_Uncategorized/       Catch-all for new/unfiled notes (Obsidian's default for new files)
 ```
 
 > [!tip] Unsorted Notes
-> Any note you create without picking a folder — a quick scratch note, or a file dropped into Obsidian — lands in `z_Uncategoried/` automatically. Move it into a proper folder once you know what it is. This folder is personal scratch space: it's never touched by the updater and isn't included when you download the template.
+> Any note you create without picking a folder — a quick scratch note, or a file dropped into Obsidian — lands in `z_Uncategorized/` automatically. Move it into a proper folder once you know what it is. This folder is personal scratch space: it's never touched by the updater and isn't included when you download the template.
 
 ### 🎨 Icon & Color System
 

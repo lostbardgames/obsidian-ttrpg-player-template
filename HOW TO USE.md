@@ -381,6 +381,19 @@ If you already have a character built on D&D Beyond, you can generate your entir
 5. Optionally enter a campaign name — this fills the **Campaign** field on your character sheet
 6. Wait for the import to finish — the vault reloads automatically when it's done
 
+### Keeping Your Character Up to Date
+
+The importer remembers your D&D Beyond link on the character note (the `ddbId`, `ddbUrl` and `ddbLastSync` properties, plus an **Open on D&D Beyond** link in the Notes section). When your sheet changes — a level-up, new gear, a new spell — click **Update Character from D&D Beyond** in the same Character section of [[1.Tools/Buttons|Buttons]]. It merges the changes into your existing note instead of replacing it.
+
+**Refreshed from D&D Beyond:** level, XP, ability scores, max HP, AC, speed, passive scores, spell save DC/attack, species/class/subclass/background, languages, skills, proficiencies, spells, features, feats, and inventory. Your per-item **Notes** column in the inventory table is kept. Alignment, gender and age update only if D&D Beyond has a value.
+
+**Never touched:** current HP (if your HP was at full it follows a new max HP; otherwise it's kept), temp HP, conditions, location, campaign, organizations, religions, goals, secrets, backstory, session history, and anything you wrote in Notes. Personality, Ideals, Flaws and Bonds are filled from D&D Beyond only while they're still the empty placeholder.
+
+The update shows a short summary of what changed (e.g. "Level: 5 → 6"), then reloads the vault. Characters imported with an earlier version of the template are recognized automatically.
+
+> [!warning] Use Update, not Import, for an existing character
+> **Import** creates the note from scratch and replaces any existing note with the same name. If the character is already linked, the importer warns you and points you to Update.
+
 ### What Gets Imported
 
 - Species, class, subclass, background, alignment, gender, age
