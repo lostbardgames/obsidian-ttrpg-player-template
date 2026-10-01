@@ -122,7 +122,7 @@ module.exports = async (params) => {
     opts.push({ label: "Everything — all characters and campaigns", run: () => resetEverything(app, qa) });
 
     const labels = opts.map(o => o.label);
-    const choice = await qa.suggester(labels, labels);
+    const choice = await qa.suggester(labels, labels, false, "What do you want to reset?");
     if (!choice) { new Notice("Reset cancelled."); return; }
     deleted = await opts.find(o => o.label === choice).run();
   } else {

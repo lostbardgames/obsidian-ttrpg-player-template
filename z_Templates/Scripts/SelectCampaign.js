@@ -59,7 +59,7 @@ module.exports = async (params) => {
   const NEW = "➕ New campaign…";
   const names = [...known].sort();
   const labels = [...names.map(n => (n === settings.campaignName ? `${n}  ✓ (active)` : n)), NEW];
-  const picked = await qa.suggester(labels, [...names, NEW]);
+  const picked = await qa.suggester(labels, [...names, NEW], false, "Pick or create a campaign");
   if (!picked) return;
 
   let campaign = picked;

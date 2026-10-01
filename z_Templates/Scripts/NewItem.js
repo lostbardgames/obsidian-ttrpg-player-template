@@ -80,7 +80,7 @@ async function selectFromFolder(app, qa, folderPath, label, allowSkip = false) {
   const opts = allowSkip ? [...existing, SKIP] : [...existing];
   if (opts.length === 0 && !allowSkip) return null;
   if (opts.length === 0) return "";
-  const choice = await qa.suggester(opts, opts);
+  const choice = await qa.suggester(opts, opts, false, label);
   if (!choice) return null;
   if (choice === SKIP) return "";
   return choice;

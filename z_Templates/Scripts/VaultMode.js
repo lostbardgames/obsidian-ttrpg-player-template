@@ -121,7 +121,7 @@ module.exports = async (params) => {
     "🧙  One character, one campaign — simplest. You can convert to multiple later, but not back.",
     "👥  Several characters or campaigns — each keeps its own notes. Can't be switched back to single.",
   ];
-  const choice = await qa.suggester(labels, [SINGLE, MULTI]);
+  const choice = await qa.suggester(labels, [SINGLE, MULTI], false, "How will you use this vault?");
   if (!choice) return;
 
   if (choice === SINGLE) {

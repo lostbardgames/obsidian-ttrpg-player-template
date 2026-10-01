@@ -139,7 +139,9 @@ module.exports = async (params) => {
   // ── Step 1: Source mode ────────────────────────────────────────────────────
   const srcValue = await qa.suggester(
     srcOptions.map(o => o.label),
-    srcOptions.map(o => o.value)
+    srcOptions.map(o => o.value),
+    false,
+    "Where should the content come from?"
   );
   if (!srcValue) return;
 
@@ -293,7 +295,9 @@ async function handleMissingPython(qa) {
 
   const choice = await qa.suggester(
     options.map(o => o.label),
-    options.map(o => o.label)
+    options.map(o => o.label),
+    false,
+    "How do you want to install Python 3?"
   );
   if (!choice || choice === "Cancel") return null;
 
