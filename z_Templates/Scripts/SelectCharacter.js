@@ -50,7 +50,7 @@ module.exports = async (params) => {
   const names = chars.map(f => f.basename).sort();
   const current = getSettings(app).characterName;
   const labels = names.map(n => (n === current ? `${n}  ✓ (active)` : n));
-  const picked = await qa.suggester(labels, names, false, "Pick your active character");
+  const picked = await qa.suggester(labels, names, "Pick your active character");
   if (!picked) return;
 
   const file = chars.find(f => f.basename === picked);

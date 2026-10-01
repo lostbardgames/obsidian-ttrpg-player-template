@@ -122,7 +122,7 @@ async function handleMissingPython(qa) {
   options.push({ label: "Cancel", action: null });
 
   const labels = options.map(o => o.label);
-  const choice = await qa.suggester(labels, labels, false, "How do you want to install Python 3?");
+  const choice = await qa.suggester(labels, labels, "How do you want to install Python 3?");
   if (!choice || choice === "Cancel") return null;
 
   const selected = options.find(o => o.label === choice);

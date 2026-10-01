@@ -121,7 +121,7 @@ async function handleMissingPython(qa) {
   options.push({ label: "Cancel", action: null });
 
   const labels = options.map(o => o.label);
-  const choice = await qa.suggester(labels, labels, false, "How do you want to install Python 3?");
+  const choice = await qa.suggester(labels, labels, "How do you want to install Python 3?");
   if (!choice || choice === "Cancel") return null;
 
   const selected = options.find(o => o.label === choice);
@@ -170,7 +170,7 @@ module.exports = async (params) => {
     target = activeLinked;
   } else if (linked.length > 1) {
     const names = linked.map(l => l.file.basename);
-    const chosen = await qa.suggester(names, names, false, "Which character?");
+    const chosen = await qa.suggester(names, names, "Which character?");
     if (!chosen) return;
     target = linked.find(l => l.file.basename === chosen);
   }
